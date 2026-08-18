@@ -71,15 +71,18 @@ export default function AppointmentsPage() {
 
   return (
     <div className="page-container animate-fade-in">
+      {/* Background decoration */}
+      <div className="page-bg-decor" />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-3">
-          <div className="stat-icon blue" style={{ width: 36, height: 36, borderRadius: 10 }}>
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-fuchsia-500 to-pink-400 flex items-center justify-center shadow-md">
             <CalendarCheck className="w-4 h-4 text-white" />
           </div>
           <div>
             <h1 className="section-title">Appointments</h1>
-            <p className="text-sm text-slate-400 font-medium">{appointments.length} total appointment{appointments.length !== 1 ? 's' : ''}</p>
+            <p className="text-sm text-purple-400/70 font-medium">{appointments.length} total appointment{appointments.length !== 1 ? 's' : ''}</p>
           </div>
         </div>
         <button onClick={() => setIsModalOpen(true)} className="btn-primary flex items-center gap-2">
@@ -89,15 +92,15 @@ export default function AppointmentsPage() {
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3 mb-6">
-        <div className="flex gap-1.5 p-1 bg-white rounded-xl border border-slate-200/80 shadow-sm">
+        <div className="flex gap-1.5 p-1 bg-white rounded-xl border border-purple-100/60 shadow-sm">
           {(['All', 'Scheduled', 'Completed', 'Cancelled'] as StatusFilter[]).map((status) => (
             <button
               key={status}
               onClick={() => setStatusFilter(status)}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 statusFilter === status
-                  ? 'bg-teal-600 text-white shadow-md'
-                  : 'text-slate-500 hover:bg-slate-50'
+                  ? 'bg-gradient-to-br from-purple-600 to-fuchsia-500 text-white shadow-md'
+                  : 'text-slate-500 hover:bg-purple-50'
               }`}
             >
               {status} ({statusCounts[status]})
@@ -105,7 +108,7 @@ export default function AppointmentsPage() {
           ))}
         </div>
         <div className="relative flex-1 max-w-xs">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-300" />
           <input
             type="text" placeholder="Search..." value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -118,15 +121,15 @@ export default function AppointmentsPage() {
       <div className="space-y-3">
         {filteredAppointments.length === 0 ? (
           <div className="glass-card-static py-20 flex flex-col items-center">
-            <CalendarCheck className="w-14 h-14 text-slate-200 mb-3" />
+            <CalendarCheck className="w-14 h-14 text-purple-200 mb-3" />
             <p className="text-sm text-slate-400 font-medium">No appointments found.</p>
           </div>
         ) : (
           filteredAppointments.map((appt) => (
             <div key={appt.id} className="glass-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-start gap-4 flex-1">
-                <div className="min-w-[52px] text-center p-2 rounded-xl bg-slate-50 border border-slate-100">
-                  <p className="text-[0.6rem] font-bold text-teal-600 uppercase leading-none mb-0.5">
+                <div className="min-w-[52px] text-center p-2 rounded-xl bg-purple-50/60 border border-purple-100/50">
+                  <p className="text-[0.6rem] font-bold text-purple-600 uppercase leading-none mb-0.5">
                     {new Date(appt.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short' })}
                   </p>
                   <p className="text-xl font-extrabold text-slate-800 leading-none">
@@ -142,7 +145,7 @@ export default function AppointmentsPage() {
                     <StatusBadge status={appt.status} />
                   </div>
                   <p className="text-sm text-slate-400">
-                    {appt.doctor} · <span className="text-teal-600 font-medium">{appt.department}</span>
+                    {appt.doctor} · <span className="text-purple-600 font-medium">{appt.department}</span>
                   </p>
                   <div className="flex items-center gap-2 mt-1.5 text-xs text-slate-400">
                     <Clock className="w-3.5 h-3.5" />

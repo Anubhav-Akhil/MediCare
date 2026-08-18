@@ -43,7 +43,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       case 'error':
         return <XCircle className="w-5 h-5 text-rose-500 flex-shrink-0" />;
       case 'info':
-        return <Info className="w-5 h-5 text-blue-500 flex-shrink-0" />;
+        return <Info className="w-5 h-5 text-purple-500 flex-shrink-0" />;
     }
   };
 
@@ -51,7 +51,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     switch (type) {
       case 'success': return '#10b981';
       case 'error': return '#f43f5e';
-      case 'info': return '#3b82f6';
+      case 'info': return '#7c3aed';
     }
   };
 

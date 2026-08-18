@@ -83,15 +83,18 @@ export default function PatientsPage() {
 
   return (
     <div className="page-container animate-fade-in">
+      {/* Background decoration */}
+      <div className="page-bg-decor" />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-3">
-          <div className="stat-icon teal" style={{ width: 36, height: 36, borderRadius: 10 }}>
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-600 to-violet-400 flex items-center justify-center shadow-md">
             <Users className="w-4 h-4 text-white" />
           </div>
           <div>
             <h1 className="section-title">Patients</h1>
-            <p className="text-sm text-slate-400 font-medium">
+            <p className="text-sm text-purple-400/70 font-medium">
               {patients.length} registered patient{patients.length !== 1 ? 's' : ''}
             </p>
           </div>
@@ -105,7 +108,7 @@ export default function PatientsPage() {
       {/* Search */}
       <div className="mb-6">
         <div className="relative max-w-md">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-300" />
           <input
             type="text"
             placeholder="Search by name, phone, or email..."
@@ -134,7 +137,7 @@ export default function PatientsPage() {
               {paginatedPatients.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="text-center py-16">
-                    <Users className="w-12 h-12 text-slate-200 mx-auto mb-3" />
+                    <Users className="w-12 h-12 text-purple-200 mx-auto mb-3" />
                     <p className="text-slate-400 text-sm font-medium">
                       {search ? 'No patients match your search.' : 'No patients registered yet.'}
                     </p>
@@ -145,7 +148,7 @@ export default function PatientsPage() {
                   <tr key={patient.id}>
                     <td>
                       <div className="flex items-center gap-3">
-                        <div className="avatar-circle avatar-teal" style={{ width: 36, height: 36, borderRadius: 10, fontSize: '0.7rem' }}>
+                        <div className="avatar-circle avatar-purple" style={{ width: 36, height: 36, borderRadius: 10, fontSize: '0.7rem' }}>
                           {patient.firstName[0]}{patient.lastName[0]}
                         </div>
                         <div>
@@ -165,7 +168,7 @@ export default function PatientsPage() {
                     </td>
                     <td>
                       <p className="text-sm text-slate-600 flex items-center gap-1">
-                        <Phone className="w-3 h-3 text-slate-300" />
+                        <Phone className="w-3 h-3 text-purple-300" />
                         {patient.phone}
                       </p>
                       <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
@@ -174,7 +177,7 @@ export default function PatientsPage() {
                       </p>
                     </td>
                     <td>
-                      <span className="text-xs font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-lg">
+                      <span className="text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-lg">
                         {patient.bloodGroup}
                       </span>
                     </td>
@@ -202,7 +205,7 @@ export default function PatientsPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100">
+          <div className="flex items-center justify-between px-6 py-4 border-t border-purple-100/40">
             <p className="text-xs text-slate-400 font-medium">
               Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredPatients.length)} of {filteredPatients.length}
             </p>
@@ -220,8 +223,8 @@ export default function PatientsPage() {
                   onClick={() => setCurrentPage(i + 1)}
                   className={`w-8 h-8 rounded-lg text-xs font-semibold transition-colors ${
                     currentPage === i + 1
-                      ? 'bg-teal-600 text-white shadow-md'
-                      : 'text-slate-500 hover:bg-slate-100'
+                      ? 'bg-gradient-to-br from-purple-600 to-fuchsia-500 text-white shadow-md'
+                      : 'text-slate-500 hover:bg-purple-50'
                   }`}
                 >
                   {i + 1}

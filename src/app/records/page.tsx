@@ -47,15 +47,18 @@ export default function RecordsPage() {
 
   return (
     <div className="page-container animate-fade-in">
+      {/* Background decoration */}
+      <div className="page-bg-decor" />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-3">
-          <div className="stat-icon emerald" style={{ width: 36, height: 36, borderRadius: 10 }}>
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-pink-500 to-rose-400 flex items-center justify-center shadow-md">
             <FileText className="w-4 h-4 text-white" />
           </div>
           <div>
             <h1 className="section-title">Medical Records</h1>
-            <p className="text-sm text-slate-400 font-medium">{records.length} clinical record{records.length !== 1 ? 's' : ''}</p>
+            <p className="text-sm text-purple-400/70 font-medium">{records.length} clinical record{records.length !== 1 ? 's' : ''}</p>
           </div>
         </div>
         <button onClick={() => setIsModalOpen(true)} className="btn-primary flex items-center gap-2">
@@ -66,7 +69,7 @@ export default function RecordsPage() {
       {/* Search */}
       <div className="mb-6">
         <div className="relative max-w-md">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-300" />
           <input type="text" placeholder="Search by patient, diagnosis, or doctor..."
             value={search} onChange={(e) => setSearch(e.target.value)} className="form-input pl-10" />
         </div>
@@ -75,7 +78,7 @@ export default function RecordsPage() {
       {/* Records Grid */}
       {filteredRecords.length === 0 ? (
         <div className="glass-card-static py-20 flex flex-col items-center">
-          <FileText className="w-14 h-14 text-slate-200 mb-3" />
+          <FileText className="w-14 h-14 text-purple-200 mb-3" />
           <p className="text-sm text-slate-400 font-medium">
             {search ? 'No records match your search.' : 'No medical records yet.'}
           </p>
@@ -86,7 +89,7 @@ export default function RecordsPage() {
             <div key={record.id} className="glass-card p-6 space-y-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="stat-icon emerald" style={{ width: 40, height: 40, borderRadius: 12 }}>
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-rose-400 flex items-center justify-center shadow-md">
                     <FileText className="w-4 h-4 text-white" />
                   </div>
                   <div>
@@ -105,22 +108,22 @@ export default function RecordsPage() {
 
               <div className="space-y-3">
                 <div className="flex items-start gap-2.5">
-                  <Stethoscope className="w-4 h-4 text-teal-500 mt-0.5 flex-shrink-0" />
+                  <Stethoscope className="w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Diagnosis</p>
+                    <p className="text-[0.65rem] font-bold text-purple-400/60 uppercase tracking-wider mb-0.5">Diagnosis</p>
                     <p className="text-sm text-slate-700 font-semibold">{record.diagnosis}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <Pill className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                  <Pill className="w-4 h-4 text-fuchsia-500 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Prescription</p>
+                    <p className="text-[0.65rem] font-bold text-purple-400/60 uppercase tracking-wider mb-0.5">Prescription</p>
                     <p className="text-sm text-slate-600 truncate-2">{record.prescription}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-slate-100/60">
+              <div className="pt-3 border-t border-purple-100/40">
                 <p className="text-xs text-slate-400"><span className="font-semibold text-slate-500">{record.doctor}</span></p>
               </div>
             </div>
@@ -137,8 +140,8 @@ export default function RecordsPage() {
       <Modal isOpen={!!viewingRecord} onClose={() => setViewingRecord(null)} title="Record Details" size="lg">
         {viewingRecord && (
           <div className="space-y-5">
-            <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-50 border border-slate-100">
-              <div className="stat-icon emerald" style={{ width: 44, height: 44, borderRadius: 14 }}>
+            <div className="flex items-center gap-3 p-4 rounded-xl bg-purple-50/50 border border-purple-100/50">
+              <div className="w-11 h-11 rounded-[14px] bg-gradient-to-br from-pink-500 to-rose-400 flex items-center justify-center shadow-md">
                 <FileText className="w-5 h-5 text-white" />
               </div>
               <div>
@@ -148,16 +151,16 @@ export default function RecordsPage() {
             </div>
             <div className="space-y-4">
               <div>
-                <div className="flex items-center gap-2 mb-1"><Stethoscope className="w-4 h-4 text-teal-500" /><p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider">Diagnosis</p></div>
+                <div className="flex items-center gap-2 mb-1"><Stethoscope className="w-4 h-4 text-purple-500" /><p className="text-[0.65rem] font-bold text-purple-400/60 uppercase tracking-wider">Diagnosis</p></div>
                 <p className="text-sm text-slate-700 pl-6">{viewingRecord.diagnosis}</p>
               </div>
               <div>
-                <div className="flex items-center gap-2 mb-1"><Pill className="w-4 h-4 text-blue-500" /><p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider">Prescription</p></div>
+                <div className="flex items-center gap-2 mb-1"><Pill className="w-4 h-4 text-fuchsia-500" /><p className="text-[0.65rem] font-bold text-purple-400/60 uppercase tracking-wider">Prescription</p></div>
                 <p className="text-sm text-slate-700 pl-6">{viewingRecord.prescription}</p>
               </div>
               {viewingRecord.notes && (
                 <div>
-                  <div className="flex items-center gap-2 mb-1"><FileText className="w-4 h-4 text-amber-500" /><p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider">Notes</p></div>
+                  <div className="flex items-center gap-2 mb-1"><FileText className="w-4 h-4 text-pink-500" /><p className="text-[0.65rem] font-bold text-purple-400/60 uppercase tracking-wider">Notes</p></div>
                   <p className="text-sm text-slate-600 pl-6">{viewingRecord.notes}</p>
                 </div>
               )}

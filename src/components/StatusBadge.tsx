@@ -15,7 +15,7 @@ export default function StatusBadge({ status }: StatusBadgeProps) {
       <span
         className={`w-1.5 h-1.5 rounded-full ${
           status === 'Scheduled'
-            ? 'bg-blue-500'
+            ? 'bg-purple-500'
             : status === 'Completed'
             ? 'bg-emerald-500'
             : 'bg-rose-500'

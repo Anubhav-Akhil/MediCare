@@ -46,7 +46,7 @@ export default function Modal({
     >
       <div className={`modal-content ${sizeClass} mx-4`}>
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-purple-100/40">
           <h3 className="text-base font-bold text-slate-800 tracking-tight">
             {title}
           </h3>

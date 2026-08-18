@@ -1,316 +1,330 @@
 'use client';
 
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import {
-  Activity,
+  ArrowRight,
+  CheckCircle2,
+  Sparkles,
+  Rocket,
+  Layers,
+  Zap,
+  Megaphone,
   Users,
   CalendarCheck,
   FileText,
-  Shield,
-  Zap,
-  Heart,
-  ArrowRight,
+  ShieldCheck,
+  HeartPulse,
+  Palette,
+  Cpu,
+  Clock,
   Check,
-  Star,
-  ChevronRight,
 } from 'lucide-react';
 
-const features = [
+import styles from './page.module.css';
+
+const sections = [
   {
-    icon: Users,
-    title: 'Patient Management',
-    desc: 'Comprehensive patient profiles with demographics, contact info, medical history, and blood group tracking.',
-    color: 'from-teal-500 to-emerald-400',
+    id: 'hero',
+    label: 'Home',
   },
   {
-    icon: CalendarCheck,
-    title: 'Smart Scheduling',
-    desc: 'Intuitive appointment scheduling with real-time status tracking, department filtering, and calendar views.',
-    color: 'from-blue-500 to-cyan-400',
+    id: 'about',
+    label: 'About',
+    eyebrow: 'Mission Control',
+    icon: Rocket,
+    title: 'Next-Gen Clinical Workflow & Practice Intelligence',
+    description:
+      'MediCare replaces cumbersome legacy health management systems with a fluid, unified mission control designed for modern clinics, specialty practices, and hospital departments.',
+    gradient: 'linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%)',
+    stats: [
+      { value: '99.9%', label: 'Uptime Reliability' },
+      { value: '10x', label: 'Faster Patient Intake' },
+      { value: '< 1s', label: 'Record Query Speed' },
+      { value: '100%', label: 'HIPAA-Ready Architecture' },
+    ],
+    cards: [
+      {
+        icon: ShieldCheck,
+        title: 'Zero-Friction Intake',
+        desc: 'Instant patient registration with automated profile validation, contact indexing, and blood group categorization.',
+      },
+      {
+        icon: HeartPulse,
+        title: 'Clinical Continuity',
+        desc: 'Centralized diagnostic histories and medication logs accessible in one tap by authorized practitioners.',
+      },
+      {
+        icon: Clock,
+        title: 'Intelligent Turnaround',
+        desc: 'Eliminate scheduling bottlenecks and double bookings with smart status pipelines and calendar views.',
+      },
+    ],
   },
   {
-    icon: FileText,
-    title: 'Medical Records',
-    desc: 'Secure digital records for diagnoses, prescriptions, and clinical notes — accessible when you need them.',
-    color: 'from-indigo-500 to-purple-400',
+    id: 'designers',
+    label: 'Designers',
+    eyebrow: 'Crafted Experience',
+    icon: Layers,
+    title: 'Engineered with 3D Depth, Glassmorphism & Visual Precision',
+    description:
+      'We designed MediCare from the ground up to reduce cognitive load during demanding medical shifts. Glass layers, tailored contrast ratios, and spatial lighting keep vital information front and center.',
+    gradient: 'linear-gradient(135deg, #d946ef 0%, #e879f9 100%)',
+    features: [
+      {
+        icon: Palette,
+        title: 'Harmonious Cosmic Theme',
+        desc: 'Curated deep purple and violet hues tuned for dark ambient clinic environments, reducing eye fatigue during night shifts.',
+      },
+      {
+        icon: Cpu,
+        title: 'Kinetic Micro-Interactions',
+        desc: 'Every badge transition, status update, and modal trigger responds with physics-based fluid animation.',
+      },
+      {
+        icon: Layers,
+        title: 'Multi-Tier Glass Hierarchy',
+        desc: 'Backdrop-filtered surface cards create unmistakable visual elevation between critical clinical data and background context.',
+      },
+      {
+        icon: CheckCircle2,
+        title: 'Adaptive Cross-Device Scaling',
+        desc: 'Pixel-perfect responsiveness across desktop workstations, clinic tablets, and on-the-go practitioner screens.',
+      },
+    ],
   },
   {
-    icon: Shield,
-    title: 'Secure & Private',
-    desc: 'Your data stays on your device with local-first architecture. No third-party servers, no compromises.',
-    color: 'from-rose-500 to-pink-400',
-  },
-  {
+    id: 'features',
+    label: 'Features',
+    eyebrow: 'Core Capabilities',
     icon: Zap,
-    title: 'Lightning Fast',
-    desc: 'Built with Next.js and optimized for speed. Instant page transitions and zero loading spinners.',
-    color: 'from-amber-500 to-yellow-400',
+    title: 'Everything Your Medical Practice Needs in One Unified Suite',
+    description:
+      'From patient onboarding to prescription management, MediCare provides end-to-end tooling that empowers doctors, administrative staff, and patients alike.',
+    gradient: 'linear-gradient(135deg, #ec4899 0%, #f472b6 100%)',
+    modules: [
+      {
+        icon: Users,
+        title: 'Patient Directory',
+        badge: 'Directory',
+        items: [
+          'Full demographic and medical contact profiles',
+          'Instant multi-field search and pagination',
+          'One-click patient record and visit history link',
+        ],
+      },
+      {
+        icon: CalendarCheck,
+        title: 'Appointment Engine',
+        badge: 'Scheduling',
+        items: [
+          'Doctor & department specific slot allocation',
+          'Instant status switching (Scheduled, Completed, Cancelled)',
+          'Real-time daily calendar digest and visit reminders',
+        ],
+      },
+      {
+        icon: FileText,
+        title: 'Clinical Records & Rx',
+        badge: 'Medical Logs',
+        items: [
+          'Structured diagnosis and prescription logging',
+          'Dedicated clinician observation notes',
+          'Instant modal-based record preview and search',
+        ],
+      },
+    ],
   },
   {
-    icon: Heart,
-    title: 'Built for Healthcare',
-    desc: 'Designed by understanding real clinical workflows. Every feature serves a purpose in patient care.',
-    color: 'from-teal-600 to-teal-400',
-  },
-];
-
-const stats = [
-  { value: '10k+', label: 'Patients Managed' },
-  { value: '50k+', label: 'Appointments Booked' },
-  { value: '99.9%', label: 'Uptime' },
-  { value: '4.9', label: 'User Rating', icon: Star },
-];
-
-const steps = [
-  {
-    num: '01',
-    title: 'Register Patients',
-    desc: 'Add patient details with comprehensive profiles including contact, demographics, and medical information.',
-  },
-  {
-    num: '02',
-    title: 'Schedule Appointments',
-    desc: 'Book appointments with specific doctors and departments. Track status in real-time.',
-  },
-  {
-    num: '03',
-    title: 'Manage Records',
-    desc: 'Log diagnoses, prescriptions, and clinical notes. Access complete patient history instantly.',
+    id: 'news',
+    label: 'News',
+    eyebrow: 'Releases & Roadmap',
+    icon: Megaphone,
+    title: 'Launch Edition: Built for the Future of Connected Care',
+    description:
+      'Explore the latest enhancements delivered in this release, along with our active development roadmap for intelligence and connected telehealth.',
+    gradient: 'linear-gradient(135deg, #f43f5e 0%, #fb7185 100%)',
+    changelog: [
+      {
+        tag: 'v2.4 · Current',
+        title: 'Cinematic 3D Landing & Navigation',
+        desc: 'Introduced high-definition 3D canvas backdrop, synced section dot tracking, and refined dark theme glass surfaces.',
+        status: 'Live',
+      },
+      {
+        tag: 'v2.3 · Update',
+        title: 'Unified Medical Records Vault',
+        desc: 'Comprehensive diagnostic records with expandable clinical view modals and real-time practitioner notes indexing.',
+        status: 'Live',
+      },
+      {
+        tag: 'v2.2 · Update',
+        title: 'Smart Appointment Workflow',
+        desc: 'Interactive appointment management with instant status toggling, filtering, and seamless calendar synchronization.',
+        status: 'Live',
+      },
+      {
+        tag: 'v3.0 · In Development',
+        title: 'AI Clinical Copilot & Telehealth',
+        desc: 'Automated diagnostic summary generation, smart prescription suggestion, and encrypted real-time video consults.',
+        status: 'Coming Soon',
+      },
+    ],
   },
 ];
 
 export default function LandingPage() {
+  const [videoReady, setVideoReady] = useState(false);
+  const [activeSection, setActiveSection] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sectionIds = ['hero', 'about', 'designers', 'features', 'news'];
+      const scrollPosition = window.scrollY + window.innerHeight / 3;
+
+      for (let i = sectionIds.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sectionIds[i]);
+        if (el && el.offsetTop <= scrollPosition) {
+          setActiveSection(i);
+          break;
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
-    <div className="overflow-hidden">
-      {/* ══════════ HERO ══════════ */}
-      <section className="hero-gradient min-h-screen flex items-center relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            {/* Badge */}
-            <div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/70 backdrop-blur-sm border border-white/60 shadow-sm mb-8 animate-fade-up"
-              style={{ opacity: 0 }}
-            >
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-sm font-medium text-slate-600">
-                Modern Healthcare Management Platform
-              </span>
+    <div className={styles.pageShell}>
+      {/* ── Fixed Pagination Dots ─────────────────────────────────── */}
+      <nav className={styles.paginationDots} aria-label="Section navigation">
+        {sections.map((section, i) => (
+          <button
+            key={section.id}
+            type="button"
+            className={styles.dotButton}
+            onClick={() => scrollToSection(section.id)}
+            aria-label={`Go to ${section.label}`}
+            title={section.label}
+          >
+            <span
+              className={`${styles.paginationDot} ${
+                activeSection === i ? styles.paginationDotActive : ''
+              }`}
+            />
+          </button>
+        ))}
+      </nav>
+
+      {/* ── Hero Section (1/5) ────────────────────────────────────── */}
+      <section className={styles.hero} id="hero">
+        <div className={styles.heroBackdrop} aria-hidden="true">
+          <video
+            className={`${styles.heroVideo} ${videoReady ? styles.heroVideoReady : ''}`}
+            src="/for_this_image_animate_it_as_r.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            onCanPlayThrough={() => setVideoReady(true)}
+          />
+          <div className={styles.heroShade} />
+          <div className={styles.heroVignette} />
+          <div className={styles.heroGlow} />
+        </div>
+
+        <div className={styles.heroInner}>
+          <div className={styles.copyBlock}>
+            <div className={styles.copyBadge}>
+              <Sparkles size={14} />
+              High-impact landing experience
             </div>
-
-            {/* Heading */}
-            <h1
-              className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.08] mb-6 animate-fade-up delay-1"
-              style={{ opacity: 0, color: '#0f172a' }}
-            >
-              Patient care,{' '}
-              <span className="gradient-text">simplified.</span>
-            </h1>
-
-            {/* Subtitle */}
-            <p
-              className="text-lg sm:text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed font-medium animate-fade-up delay-2"
-              style={{ opacity: 0 }}
-            >
-              Streamline your practice with an elegant platform for managing
-              patients, appointments, and medical records — all in one place.
+            <h1 className={styles.headline}>Boost Your Practice</h1>
+            <p className={styles.subcopy}>
+              Patients, appointments, and records now sit on top of a polished
+              full-screen 3D background so the landing page feels premium before
+              users even enter the product.
             </p>
-
-            {/* CTAs */}
-            <div
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up delay-3"
-              style={{ opacity: 0 }}
-            >
-              <Link
-                href="/dashboard"
-                className="btn-primary text-base px-8 py-3.5 flex items-center gap-2"
-              >
-                Get Started Free
-                <ArrowRight className="w-4 h-4" />
+            <div className={styles.ctaRow}>
+              <Link href="/dashboard" className={styles.primaryCta}>
+                <span className={styles.ctaIcon}>
+                  <CheckCircle2 size={16} />
+                </span>
+                Boost Now
               </Link>
-              <Link
-                href="#features"
-                className="btn-outline-primary text-base px-8 py-3.5"
+              <button
+                type="button"
+                onClick={() => scrollToSection('about')}
+                className={styles.secondaryCta}
               >
-                Explore Features
-              </Link>
+                Explore More
+                <ArrowRight size={16} />
+              </button>
             </div>
-
-            {/* Trust line */}
-            <p
-              className="mt-10 text-sm text-slate-400 font-medium animate-fade-up delay-4"
-              style={{ opacity: 0 }}
-            >
-              Trusted by 200+ healthcare professionals
-            </p>
           </div>
 
-          {/* Hero Visual — Floating Glass Cards */}
-          <div
-            className="mt-16 max-w-4xl mx-auto relative animate-fade-up delay-5"
-            style={{ opacity: 0 }}
-          >
-            <div className="glass-card-static p-6 sm:p-8">
-              {/* Mock Dashboard Preview */}
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-3 h-3 rounded-full bg-rose-400" />
-                <div className="w-3 h-3 rounded-full bg-amber-400" />
-                <div className="w-3 h-3 rounded-full bg-emerald-400" />
-                <span className="ml-3 text-xs text-slate-400 font-medium">
-                  MediCare Dashboard
-                </span>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-                {[
-                  { label: 'Total Patients', value: '1,284', color: 'text-teal-600' },
-                  { label: 'Appointments', value: '48', color: 'text-blue-600' },
-                  { label: 'Completed', value: '156', color: 'text-emerald-600' },
-                  { label: 'Records', value: '892', color: 'text-indigo-600' },
-                ].map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="bg-white/60 rounded-xl p-4 border border-white/40"
-                  >
-                    <p className="text-xs text-slate-400 font-medium mb-1">
-                      {stat.label}
-                    </p>
-                    <p className={`text-2xl font-bold ${stat.color}`}>
-                      {stat.value}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="bg-white/60 rounded-xl p-5 border border-white/40">
-                  <p className="text-sm font-semibold text-slate-700 mb-3">
-                    Recent Patients
-                  </p>
-                  {['Aarav Sharma', 'Priya Patel', 'Rohan Gupta'].map(
-                    (name, i) => (
-                      <div
-                        key={name}
-                        className="flex items-center gap-3 py-2"
-                      >
-                        <div
-                          className={`w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold ${
-                            i === 0
-                              ? 'bg-gradient-to-br from-teal-500 to-teal-400'
-                              : i === 1
-                              ? 'bg-gradient-to-br from-blue-500 to-blue-400'
-                              : 'bg-gradient-to-br from-indigo-500 to-indigo-400'
-                          }`}
-                        >
-                          {name
-                            .split(' ')
-                            .map((n) => n[0])
-                            .join('')}
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-slate-700">
-                            {name}
-                          </p>
-                          <p className="text-xs text-slate-400">
-                            Just registered
-                          </p>
-                        </div>
-                      </div>
-                    )
-                  )}
-                </div>
-                <div className="bg-white/60 rounded-xl p-5 border border-white/40">
-                  <p className="text-sm font-semibold text-slate-700 mb-3">
-                    Today&apos;s Schedule
-                  </p>
-                  {[
-                    { time: '10:00 AM', name: 'Cardiology Check', status: 'Scheduled' },
-                    { time: '11:30 AM', name: 'Dermatology Visit', status: 'Completed' },
-                    { time: '02:00 PM', name: 'Prenatal Checkup', status: 'Scheduled' },
-                  ].map((apt) => (
-                    <div
-                      key={apt.time}
-                      className="flex items-center justify-between py-2"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs font-semibold text-slate-400 w-16">
-                          {apt.time}
-                        </span>
-                        <span className="text-sm text-slate-700">
-                          {apt.name}
-                        </span>
-                      </div>
-                      <span
-                        className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                          apt.status === 'Completed'
-                            ? 'bg-emerald-50 text-emerald-600'
-                            : 'bg-blue-50 text-blue-600'
-                        }`}
-                      >
-                        {apt.status}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+          <div className={styles.socialRail}>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className={styles.socialIcon} aria-label="Facebook">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className={styles.socialIcon} aria-label="Instagram">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className={styles.socialIcon} aria-label="LinkedIn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </a>
           </div>
         </div>
       </section>
 
-      {/* ══════════ STATS BAR ══════════ */}
-      <section className="py-14 bg-white border-y border-slate-100">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
-            {stats.map((s) => (
-              <div key={s.label}>
-                <p className="text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-tight flex items-center justify-center gap-1">
-                  {s.value}
-                  {s.icon && <Star className="w-5 h-5 text-amber-400 fill-amber-400" />}
-                </p>
-                <p className="text-sm text-slate-400 font-medium mt-1">
-                  {s.label}
-                </p>
+      {/* ── Section 2: About (2/5) ────────────────────────────────── */}
+      <section id="about" className={styles.fullSection}>
+        <div className={styles.fullSectionBg} aria-hidden="true">
+          <div className={styles.fullSectionOrb1} style={{ background: sections[1].gradient }} />
+          <div className={styles.fullSectionOrb2} style={{ background: sections[1].gradient }} />
+        </div>
+
+        <div className={styles.fullSectionInner}>
+          <div className={styles.sectionHeader}>
+            <div className={styles.sectionIconWrap} style={{ background: sections[1].gradient }}>
+              <Rocket size={26} color="#fff" strokeWidth={2} />
+            </div>
+            <span className={styles.sectionEyebrow}>{sections[1].eyebrow}</span>
+            <h2 className={styles.sectionTitle}>{sections[1].title}</h2>
+            <p className={styles.sectionDescription}>{sections[1].description}</p>
+          </div>
+
+          {/* Stats Row */}
+          <div className={styles.statsGrid}>
+            {sections[1].stats?.map((st) => (
+              <div key={st.label} className={styles.statCard}>
+                <p className={styles.statValue}>{st.value}</p>
+                <p className={styles.statLabel}>{st.label}</p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* ══════════ FEATURES ══════════ */}
-      <section id="features" className="py-24 bg-gradient-to-b from-slate-50/50 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <span className="section-badge mb-4">
-              <Zap className="w-3.5 h-3.5" />
-              Features
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-tight mt-4 mb-4">
-              Everything you need to run your practice
-            </h2>
-            <p className="text-lg text-slate-400 max-w-2xl mx-auto font-medium">
-              From patient registration to medical records, every tool is
-              designed for speed, clarity, and reliability.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, i) => {
-              const Icon = feature.icon;
+          {/* Highlights 3-Card Grid */}
+          <div className={styles.cardGrid3}>
+            {sections[1].cards?.map((c) => {
+              const CardIcon = c.icon;
               return (
-                <div
-                  key={feature.title}
-                  className={`feature-card animate-fade-up delay-${i + 1}`}
-                  style={{ opacity: 0, animationFillMode: 'forwards' }}
-                >
-                  <div
-                    className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-5 shadow-lg`}
-                  >
-                    <Icon className="w-6 h-6 text-white" strokeWidth={2} />
+                <div key={c.title} className={styles.featureCard}>
+                  <div className={styles.cardIconBox} style={{ background: sections[1].gradient }}>
+                    <CardIcon size={20} color="#fff" />
                   </div>
-                  <h3 className="text-lg font-bold text-slate-800 mb-2 tracking-tight">
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm text-slate-500 leading-relaxed">
-                    {feature.desc}
-                  </p>
+                  <h3 className={styles.cardHeading}>{c.title}</h3>
+                  <p className={styles.cardBody}>{c.desc}</p>
                 </div>
               );
             })}
@@ -318,120 +332,143 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══════════ HOW IT WORKS ══════════ */}
-      <section className="py-24 bg-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <span className="section-badge mb-4">
-              <Activity className="w-3.5 h-3.5" />
-              How It Works
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-tight mt-4 mb-4">
-              Three simple steps
-            </h2>
-            <p className="text-lg text-slate-400 max-w-xl mx-auto font-medium">
-              Get started in minutes with an intuitive workflow designed for
-              healthcare teams.
-            </p>
+      {/* ── Section 3: Designers (3/5) ────────────────────────────── */}
+      <section id="designers" className={styles.fullSection}>
+        <div className={styles.fullSectionBg} aria-hidden="true">
+          <div className={styles.fullSectionOrb1} style={{ background: sections[2].gradient }} />
+          <div className={styles.fullSectionOrb2} style={{ background: sections[2].gradient }} />
+        </div>
+
+        <div className={styles.fullSectionInner}>
+          <div className={styles.sectionHeader}>
+            <div className={styles.sectionIconWrap} style={{ background: sections[2].gradient }}>
+              <Layers size={26} color="#fff" strokeWidth={2} />
+            </div>
+            <span className={styles.sectionEyebrow}>{sections[2].eyebrow}</span>
+            <h2 className={styles.sectionTitle}>{sections[2].title}</h2>
+            <p className={styles.sectionDescription}>{sections[2].description}</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {steps.map((step, i) => (
-              <div key={step.num} className="text-center relative">
-                {/* Connector line */}
-                {i < steps.length - 1 && (
-                  <div className="hidden md:block absolute top-10 left-[60%] w-[80%] border-t-2 border-dashed border-slate-200" />
-                )}
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100 flex items-center justify-center mx-auto mb-6 relative z-10">
-                  <span className="text-2xl font-extrabold text-teal-600">
-                    {step.num}
+          {/* 2x2 Feature Showcase Cards */}
+          <div className={styles.cardGrid2}>
+            {sections[2].features?.map((f) => {
+              const FIcon = f.icon;
+              return (
+                <div key={f.title} className={styles.showcaseCard}>
+                  <div className={styles.showcaseHeader}>
+                    <div className={styles.cardIconBox} style={{ background: sections[2].gradient }}>
+                      <FIcon size={20} color="#fff" />
+                    </div>
+                    <h3 className={styles.cardHeading}>{f.title}</h3>
+                  </div>
+                  <p className={styles.cardBody}>{f.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Section 4: Features (4/5) ─────────────────────────────── */}
+      <section id="features" className={styles.fullSection}>
+        <div className={styles.fullSectionBg} aria-hidden="true">
+          <div className={styles.fullSectionOrb1} style={{ background: sections[3].gradient }} />
+          <div className={styles.fullSectionOrb2} style={{ background: sections[3].gradient }} />
+        </div>
+
+        <div className={styles.fullSectionInner}>
+          <div className={styles.sectionHeader}>
+            <div className={styles.sectionIconWrap} style={{ background: sections[3].gradient }}>
+              <Zap size={26} color="#fff" strokeWidth={2} />
+            </div>
+            <span className={styles.sectionEyebrow}>{sections[3].eyebrow}</span>
+            <h2 className={styles.sectionTitle}>{sections[3].title}</h2>
+            <p className={styles.sectionDescription}>{sections[3].description}</p>
+          </div>
+
+          {/* 3 Core Capability Modules */}
+          <div className={styles.cardGrid3}>
+            {sections[3].modules?.map((m) => {
+              const MIcon = m.icon;
+              return (
+                <div key={m.title} className={styles.moduleCard}>
+                  <div className={styles.moduleTop}>
+                    <div className={styles.cardIconBox} style={{ background: sections[3].gradient }}>
+                      <MIcon size={20} color="#fff" />
+                    </div>
+                    <span className={styles.moduleBadge}>{m.badge}</span>
+                  </div>
+                  <h3 className={styles.cardHeading}>{m.title}</h3>
+                  <ul className={styles.moduleList}>
+                    {m.items.map((it) => (
+                      <li key={it}>
+                        <Check size={14} className={styles.checkIcon} />
+                        <span>{it}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Section 5: News (5/5) ─────────────────────────────────── */}
+      <section id="news" className={styles.fullSection}>
+        <div className={styles.fullSectionBg} aria-hidden="true">
+          <div className={styles.fullSectionOrb1} style={{ background: sections[4].gradient }} />
+          <div className={styles.fullSectionOrb2} style={{ background: sections[4].gradient }} />
+        </div>
+
+        <div className={styles.fullSectionInner}>
+          <div className={styles.sectionHeader}>
+            <div className={styles.sectionIconWrap} style={{ background: sections[4].gradient }}>
+              <Megaphone size={26} color="#fff" strokeWidth={2} />
+            </div>
+            <span className={styles.sectionEyebrow}>{sections[4].eyebrow}</span>
+            <h2 className={styles.sectionTitle}>{sections[4].title}</h2>
+            <p className={styles.sectionDescription}>{sections[4].description}</p>
+          </div>
+
+          {/* 4-Item Timeline / Changelog Grid */}
+          <div className={styles.cardGrid2}>
+            {sections[4].changelog?.map((log) => (
+              <div key={log.title} className={styles.newsCard}>
+                <div className={styles.newsTopRow}>
+                  <span className={styles.newsTag}>{log.tag}</span>
+                  <span
+                    className={
+                      log.status === 'Live'
+                        ? styles.newsStatusLive
+                        : styles.newsStatusUpcoming
+                    }
+                  >
+                    {log.status}
                   </span>
                 </div>
-                <h3 className="text-lg font-bold text-slate-800 mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-sm text-slate-500 leading-relaxed max-w-xs mx-auto">
-                  {step.desc}
-                </p>
+                <h3 className={styles.cardHeading}>{log.title}</h3>
+                <p className={styles.cardBody}>{log.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ══════════ CTA ══════════ */}
-      <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-teal-600 via-teal-700 to-emerald-800" />
-        <div className="absolute inset-0 opacity-10">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.15), transparent 50%), radial-gradient(circle at 80% 50%, rgba(255,255,255,0.1), transparent 50%)',
-            }}
-          />
-        </div>
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-4">
-            Ready to modernize your practice?
-          </h2>
-          <p className="text-lg text-teal-100 mb-10 font-medium max-w-xl mx-auto">
-            Join healthcare professionals who trust MediCare for efficient
-            patient management.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/dashboard"
-              className="px-8 py-3.5 bg-white text-teal-700 font-bold rounded-xl text-base shadow-lg hover:shadow-xl transition-shadow flex items-center gap-2"
-            >
-              Start Managing Patients
-              <ChevronRight className="w-4 h-4" />
-            </Link>
+      {/* ── Footer ─────────────────────────────────────────── */}
+      <footer className={styles.footer}>
+        <div className={styles.footerInner}>
+          <div className={styles.footerBrand}>
+            <span className={styles.footerLogo}>MediCare</span>
+            <span className={styles.footerTagline}>Modern Patient Management Platform</span>
           </div>
-          <div className="flex items-center justify-center gap-6 mt-8 text-teal-200 text-sm font-medium">
-            <span className="flex items-center gap-2">
-              <Check className="w-4 h-4" /> Free to use
-            </span>
-            <span className="flex items-center gap-2">
-              <Check className="w-4 h-4" /> No signup needed
-            </span>
-            <span className="flex items-center gap-2">
-              <Check className="w-4 h-4" /> Fully offline
-            </span>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════ FOOTER ══════════ */}
-      <footer className="py-12 bg-slate-900 text-slate-400">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-500 to-teal-400 flex items-center justify-center">
-                <Activity className="w-4 h-4 text-white" strokeWidth={2.5} />
-              </div>
-              <span className="text-white font-bold text-lg tracking-tight">
-                MediCare
-              </span>
-            </div>
-            <div className="flex items-center gap-8 text-sm font-medium">
-              <Link href="/dashboard" className="hover:text-white transition-colors">
-                Dashboard
-              </Link>
-              <Link href="/patients" className="hover:text-white transition-colors">
-                Patients
-              </Link>
-              <Link href="/appointments" className="hover:text-white transition-colors">
-                Appointments
-              </Link>
-              <Link href="/records" className="hover:text-white transition-colors">
-                Records
-              </Link>
-            </div>
-            <p className="text-sm">
-              &copy; {new Date().getFullYear()} MediCare. All rights reserved.
-            </p>
-          </div>
+          <nav className={styles.footerNav}>
+            <Link href="/dashboard">Dashboard</Link>
+            <Link href="/patients">Patients</Link>
+            <Link href="/appointments">Appointments</Link>
+            <Link href="/records">Records</Link>
+          </nav>
+          <p className={styles.footerCopy}>© {new Date().getFullYear()} MediCare. All rights reserved.</p>
         </div>
       </footer>
     </div>
