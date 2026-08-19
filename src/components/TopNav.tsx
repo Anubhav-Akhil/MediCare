@@ -27,10 +27,11 @@ const appNavItems = [
 ];
 
 const landingNavItems = [
-  { href: '#about', label: 'About' },
-  { href: '#designers', label: 'Designers' },
-  { href: '#features', label: 'Features' },
-  { href: '#news', label: 'News' },
+  { href: '#operations', label: 'Operations' },
+  { href: '#workflow', label: 'Workflow' },
+  { href: '#roles', label: 'Roles' },
+  { href: '#continuity', label: 'Continuity' },
+  { href: '#security', label: 'Security' },
 ];
 
 export default function TopNav() {
@@ -40,7 +41,7 @@ export default function TopNav() {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [visible, setVisible] = useState(true);
   const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState<string>('#about');
+  const [activeSection, setActiveSection] = useState<string>('#operations');
   const dropdownRef = useRef<HTMLDivElement>(null);
   const lastScrollYRef = useRef(0);
 
@@ -73,7 +74,7 @@ export default function TopNav() {
 
           // Track active section on landing page
           if (pathname === '/') {
-            const sectionIds = ['news', 'features', 'designers', 'about'];
+            const sectionIds = ['security', 'continuity', 'roles', 'workflow', 'operations'];
             const scrollPosition = currentScrollY + 140;
 
             for (const id of sectionIds) {
@@ -135,6 +136,10 @@ export default function TopNav() {
   const isLanding = pathname === '/';
   const isAuthPage = pathname === '/login' || pathname === '/register';
 
+  if (isAuthPage) {
+    return null;
+  }
+
   // Get user initials for avatar
   const initials = user?.name
     ? user.name
@@ -160,31 +165,35 @@ export default function TopNav() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative flex items-center justify-between h-[72px]">
           {/* Brand Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
+          <Link href="/" className="flex items-center gap-2.5 group">
             <div
-              className={`w-9 h-9 rounded-[12px] overflow-hidden flex items-center justify-center transition-transform duration-300 group-hover:scale-105 ${
-                isLanding ? 'shadow-sm' : 'shadow-md group-hover:shadow-lg'
+              className={`relative w-10 h-10 rounded-[13px] overflow-hidden flex items-center justify-center transition-all duration-300 group-hover:scale-[1.06] group-hover:rotate-[-2deg] ${
+                isLanding
+                  ? 'shadow-lg shadow-purple-950/40 ring-1 ring-white/15'
+                  : 'shadow-md shadow-purple-200/50 ring-1 ring-purple-200/50 group-hover:shadow-lg group-hover:ring-purple-300/60'
               }`}
             >
               <Image
                 src="/logo.svg"
                 alt="MediCare Logo"
-                width={36}
-                height={36}
+                width={40}
+                height={40}
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-0.5">
               <span
-                className={`text-[1.05rem] font-extrabold tracking-tight leading-tight transition-colors duration-300 ${
-                  isLanding ? 'text-white' : 'text-slate-800'
+                className={`text-[1.1rem] font-black tracking-[-0.03em] leading-none transition-colors duration-300 ${
+                  isLanding
+                    ? 'bg-gradient-to-r from-white via-purple-200 to-purple-300 bg-clip-text text-transparent'
+                    : 'text-slate-900'
                 }`}
               >
-                MediCare
+                Medi<span className={isLanding ? '' : 'text-purple-600'}>Care</span>
               </span>
               <span
-                className={`text-[0.62rem] font-semibold tracking-[0.24em] uppercase leading-none transition-colors duration-300 ${
-                  isLanding ? 'text-purple-300/80' : 'text-purple-500'
+                className={`text-[0.55rem] font-bold tracking-[0.2em] uppercase leading-none transition-colors duration-300 ${
+                  isLanding ? 'text-purple-400/70' : 'text-purple-400'
                 }`}
               >
                 Practice Intelligence

@@ -5,6 +5,7 @@ export interface IUserDocument extends Document {
   email: string;
   password: string;
   role: 'Doctor' | 'Admin' | 'Staff' | 'Nurse';
+  clinicName?: string;
   department: string;
   avatar?: string;
   createdAt: Date;
@@ -18,6 +19,11 @@ const UserSchema = new Schema<IUserDocument>(
       required: [true, 'Please provide a full name'],
       trim: true,
       maxlength: [100, 'Name cannot exceed 100 characters'],
+    },
+    clinicName: {
+      type: String,
+      trim: true,
+      default: '',
     },
     email: {
       type: String,

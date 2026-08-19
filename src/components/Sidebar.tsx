@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -7,7 +8,6 @@ import {
   Users,
   CalendarCheck,
   FileText,
-  Activity,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
@@ -31,16 +31,24 @@ export default function Sidebar() {
       }`}
     >
       {/* Logo */}
-      <div className="flex items-center gap-3 px-5 py-6 border-b border-white/10">
-        <div className="w-10 h-10 rounded-xl gradient-teal flex items-center justify-center flex-shrink-0 shadow-lg">
-          <Activity className="w-5 h-5 text-white" />
+      <div className="flex items-center gap-2.5 px-5 py-6 border-b border-white/10">
+        <div className="w-10 h-10 rounded-[13px] overflow-hidden flex items-center justify-center flex-shrink-0 shadow-lg shadow-purple-950/30 ring-1 ring-white/10">
+          <Image
+            src="/logo.svg"
+            alt="MediCare Logo"
+            width={40}
+            height={40}
+            className="w-full h-full object-cover"
+          />
         </div>
         {!collapsed && (
-          <div className="animate-fade-in">
-            <h1 className="text-white font-bold text-lg leading-tight tracking-tight">
+          <div className="animate-fade-in flex flex-col gap-0.5">
+            <h1 className="text-[1.1rem] font-black leading-none tracking-[-0.03em] bg-gradient-to-r from-white via-purple-200 to-purple-300 bg-clip-text text-transparent">
               MediCare
             </h1>
-            <p className="text-slate-400 text-xs">Patient Management</p>
+            <p className="text-purple-400/60 text-[0.55rem] font-bold tracking-[0.2em] uppercase leading-none">
+              Practice Intelligence
+            </p>
           </div>
         )}
       </div>

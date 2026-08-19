@@ -50,6 +50,7 @@ export interface User {
   name: string;
   email: string;
   role: 'Doctor' | 'Admin' | 'Staff' | 'Nurse';
+  clinicName?: string;
   department?: string;
   avatar?: string;
   createdAt: string;
@@ -69,6 +70,7 @@ export interface RegisterData {
   name: string;
   email: string;
   password: string;
+  clinicName?: string;
   role?: 'Doctor' | 'Admin' | 'Staff' | 'Nurse';
   department?: string;
 }

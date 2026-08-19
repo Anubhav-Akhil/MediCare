@@ -2,6 +2,7 @@
 
 import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Mail,
@@ -9,8 +10,8 @@ import {
   Eye,
   EyeOff,
   ArrowRight,
+  ArrowLeft,
   ShieldCheck,
-  Activity,
   Sparkles,
   AlertCircle,
   Stethoscope,
@@ -31,7 +32,6 @@ function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -39,26 +39,25 @@ function LoginForm() {
     e.preventDefault();
     setErrorMessage(null);
 
-    if (!email || !password) {
-      setErrorMessage('Please enter both your email address and password.');
+    if (!email.trim() || !password) {
+      setErrorMessage('Please enter both your work email and password.');
       return;
     }
 
     setIsLoading(true);
 
     try {
-      const result = await login({ email, password });
+      const result = await login({ email: email.trim(), password });
 
       if (result.success) {
-        showToast('Login successful! Redirecting...', 'success');
+        showToast('Welcome back! Redirecting to workspace...', 'success');
         router.push(redirectPath);
         router.refresh();
       } else {
-        // If user doesn't exist in DB, maybe they need to seed or register
         setErrorMessage(result.error || 'Invalid email or password.');
       }
     } catch {
-      setErrorMessage('An unexpected error occurred. Please try again.');
+      setErrorMessage('An unexpected network error occurred. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -94,181 +93,234 @@ function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md">
-      {/* Glass Login Card */}
-      <div className="glass-card-static p-8 sm:p-10 shadow-2xl relative overflow-hidden border border-purple-200/50 backdrop-blur-xl">
-        {/* Background glow circle */}
-        <div className="absolute -top-16 -right-16 w-36 h-36 rounded-full bg-gradient-to-br from-purple-600/20 to-fuchsia-500/20 blur-2xl pointer-events-none" />
-        <div className="absolute -bottom-16 -left-16 w-36 h-36 rounded-full bg-gradient-to-tr from-fuchsia-600/15 to-purple-500/15 blur-2xl pointer-events-none" />
+    <div className="h-screen max-h-screen bg-[#0c001a] text-white flex flex-col justify-center px-4 sm:px-6 lg:px-8 relative overflow-y-auto lg:overflow-hidden">
+      {/* Top Right: Modern Back to Home Pill */}
+      <div className="absolute top-5 right-5 sm:top-7 sm:right-7 z-30">
+        <Link
+          href="/"
+          className="group relative inline-flex items-center gap-2.5 pl-2.5 pr-4 py-1.5 rounded-full bg-slate-950/80 hover:bg-purple-950/90 border border-purple-500/30 hover:border-purple-400/60 backdrop-blur-2xl text-xs font-semibold text-purple-200 hover:text-white transition-all duration-300 hover:scale-105 active:scale-95 shadow-xl shadow-purple-950/60"
+        >
+          {/* Subtle glowing hover aura */}
+          <span className="absolute -inset-0.5 rounded-full bg-gradient-to-r from-purple-600 via-fuchsia-600 to-pink-500 opacity-0 group-hover:opacity-30 blur-sm transition-opacity duration-300 pointer-events-none" />
 
-        {/* Header */}
-        <div className="text-center mb-8 relative z-10">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-600 to-fuchsia-500 text-white shadow-lg shadow-purple-600/30 mb-4 transform hover:scale-105 transition-transform duration-300">
-            <Activity className="w-7 h-7" />
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight">
-            Welcome Back
-          </h1>
-          <p className="text-sm text-purple-600/70 font-medium mt-1">
-            Sign in to access your clinical dashboard
-          </p>
-        </div>
+          {/* Animated disc with arrow */}
+          <span className="relative w-6 h-6 rounded-full bg-purple-600/30 border border-purple-400/30 flex items-center justify-center text-purple-300 group-hover:bg-gradient-to-tr group-hover:from-purple-600 group-hover:to-fuchsia-500 group-hover:text-white transition-all duration-300 shadow-sm">
+            <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform duration-300" />
+          </span>
 
-        {/* Error Notification */}
-        {errorMessage && (
-          <div className="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200/80 text-rose-700 text-xs sm:text-sm flex items-start gap-3 animate-fade-in shadow-sm">
-            <AlertCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
-            <div className="flex-1">
-              <p className="font-semibold">{errorMessage}</p>
-              {errorMessage.includes('Invalid') && (
-                <p className="mt-1 text-rose-600/80">
-                  Tip: Click one of the quick demo accounts below to auto-seed and log in.
-                </p>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
-          <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-              Email Address
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-400">
-                <Mail className="w-4 h-4" />
-              </div>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="doctor@medicare.com"
-                className="pro-input pl-10 w-full text-sm font-medium bg-white/70 focus:bg-white"
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-                Password
-              </label>
-              <button
-                type="button"
-                onClick={() => showToast('Please contact your clinic administrator to reset your password.', 'info')}
-                className="text-xs text-purple-600 hover:text-purple-700 font-semibold transition-colors"
-              >
-                Forgot password?
-              </button>
-            </div>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-400">
-                <Lock className="w-4 h-4" />
-              </div>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="pro-input pl-10 pr-10 w-full text-sm font-medium bg-white/70 focus:bg-white"
-                disabled={isLoading}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-purple-600 transition-colors"
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <label className="flex items-center gap-2 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="w-4 h-4 rounded border-purple-300 text-purple-600 focus:ring-purple-500 accent-purple-600"
-              />
-              <span className="text-xs font-medium text-slate-600">Remember this session</span>
-            </label>
-          </div>
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full btn-primary py-3 rounded-xl flex items-center justify-center gap-2 font-bold shadow-lg shadow-purple-600/25 hover:shadow-purple-600/40 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 disabled:opacity-70 cursor-pointer text-sm"
-          >
-            {isLoading ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                <span>Authenticating...</span>
-              </>
-            ) : (
-              <>
-                <span>Sign In to Dashboard</span>
-                <ArrowRight className="w-4 h-4" />
-              </>
-            )}
-          </button>
-        </form>
-
-        {/* Quick Demo Credentials */}
-        <div className="mt-8 pt-6 border-t border-purple-100/60 relative z-10">
-          <p className="text-[0.7rem] font-bold uppercase tracking-wider text-purple-500/80 mb-3 flex items-center gap-1.5 justify-center">
-            <Sparkles className="w-3.5 h-3.5 text-fuchsia-500" />
-            Quick Demo Login (1-Click)
-          </p>
-          <div className="grid grid-cols-2 gap-2.5">
-            <button
-              type="button"
-              onClick={() => handleQuickFill('doctor@medicare.com', 'password123')}
-              disabled={isLoading}
-              className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border border-purple-200/80 bg-purple-50/60 hover:bg-purple-100/70 text-purple-900 text-xs font-semibold transition-all hover:border-purple-300 shadow-xs active:scale-95"
-            >
-              <Stethoscope className="w-3.5 h-3.5 text-purple-600" />
-              <span>Doctor Portal</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleQuickFill('admin@medicare.com', 'password123')}
-              disabled={isLoading}
-              className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border border-purple-200/80 bg-purple-50/60 hover:bg-purple-100/70 text-purple-900 text-xs font-semibold transition-all hover:border-purple-300 shadow-xs active:scale-95"
-            >
-              <KeyRound className="w-3.5 h-3.5 text-fuchsia-600" />
-              <span>Admin Portal</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Register footer link */}
-        <div className="mt-6 text-center text-xs text-slate-500 relative z-10">
-          Don&apos;t have an account?{' '}
-          <Link
-            href="/register"
-            className="text-purple-600 hover:text-purple-700 font-bold hover:underline"
-          >
-            Create practitioner account
-          </Link>
-        </div>
+          <span className="relative font-bold tracking-tight">Back to Home</span>
+        </Link>
       </div>
 
-      {/* Security badges */}
-      <div className="flex items-center justify-center gap-6 mt-6 text-slate-400 text-xs font-medium">
-        <span className="flex items-center gap-1.5">
-          <ShieldCheck className="w-4 h-4 text-emerald-500" />
-          HIPAA Ready
-        </span>
-        <span className="flex items-center gap-1.5">
-          <CheckCircle2 className="w-4 h-4 text-purple-500" />
-          JWT Session Security
-        </span>
+      {/* Ambient background glows */}
+      <div className="absolute top-1/4 -left-20 w-96 h-96 bg-purple-600/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-fuchsia-600/15 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-5xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10 py-6">
+        {/* Left Column: Branding & Workspace Mission */}
+        <div className="lg:col-span-5 space-y-4">
+          <Link href="/" className="inline-flex items-center gap-2.5 group">
+            <div className="w-9 h-9 rounded-2xl overflow-hidden bg-purple-600/30 border border-purple-400/30 p-1 shadow-lg group-hover:scale-105 transition-transform">
+              <Image
+                src="/logo.svg"
+                alt="MediCare Logo"
+                width={36}
+                height={36}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <span className="text-lg font-black tracking-tight text-white block leading-none">
+                MediCare
+              </span>
+              <span className="text-[0.62rem] font-bold text-purple-300 uppercase tracking-widest leading-none">
+                Clinic workspace
+              </span>
+            </div>
+          </Link>
+
+          <div>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight">
+              A calmer clinic day
+            </h1>
+            <p className="text-sm sm:text-base font-bold text-purple-300 mt-1">
+              The workbench for care that keeps moving.
+            </p>
+          </div>
+
+          <p className="text-xs sm:text-sm text-purple-200/80 leading-relaxed max-w-sm">
+            MediCare brings the patient journey into one focused workspace — from the first check-in to the follow-up.
+          </p>
+
+          <div className="pt-1">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-950/80 border border-purple-500/30 text-purple-200 text-xs font-semibold">
+              <ShieldCheck className="w-3.5 h-3.5 text-purple-400" />
+              <span>Tenant-isolated by design</span>
+            </div>
+          </div>
+
+          {/* Value Points */}
+          <div className="space-y-2 pt-2 text-xs text-purple-200/70">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <span>Full patient context ready before every visit</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <span>Live schedule, walk-in queue, and consultation notes</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <span>Secure role-based access for all clinical staff</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Sign In Form Card */}
+        <div className="lg:col-span-7">
+          <div className="rounded-3xl bg-slate-950/85 border border-purple-500/30 backdrop-blur-2xl p-5 sm:p-7 shadow-2xl shadow-purple-950/60">
+            {/* Form Header */}
+            <div className="mb-4">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-900/40 border border-purple-400/30 text-purple-300 text-[0.7rem] font-bold uppercase tracking-wider mb-1.5">
+                <Sparkles className="w-3 h-3 text-purple-400" />
+                Welcome back
+              </div>
+              <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+                Sign in to MediCare
+              </h2>
+              <p className="text-xs text-purple-200/80 mt-0.5">
+                Pick up where your clinic day left off.
+              </p>
+            </div>
+
+            {/* Error Message */}
+            {errorMessage && (
+              <div className="mb-4 p-3 rounded-xl bg-rose-950/60 border border-rose-500/40 text-rose-200 text-xs flex items-start gap-2.5 animate-fade-in">
+                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                <div className="flex-1 font-medium">{errorMessage}</div>
+              </div>
+            )}
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-3">
+              {/* Work Email */}
+              <div>
+                <label className="block text-[0.7rem] font-bold text-purple-200 uppercase tracking-wider mb-1">
+                  Work email*
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-400">
+                    <Mail className="w-3.5 h-3.5" />
+                  </div>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="doctor@medicare.com"
+                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/5 border border-purple-500/30 text-white placeholder-purple-300/40 text-xs focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all"
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+
+              {/* Password */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-[0.7rem] font-bold text-purple-200 uppercase tracking-wider">
+                    Password*
+                  </label>
+                  <span
+                    onClick={() => {
+                      setEmail('doctor@medicare.com');
+                      setPassword('password123');
+                    }}
+                    className="text-[0.68rem] text-purple-300 hover:text-white cursor-pointer transition-colors"
+                  >
+                    Forgot password?
+                  </span>
+                </div>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-400">
+                    <Lock className="w-3.5 h-3.5" />
+                  </div>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full pl-9 pr-10 py-2 rounded-xl bg-white/5 border border-purple-500/30 text-white placeholder-purple-300/40 text-xs focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 transition-all"
+                    disabled={isLoading}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-purple-400 hover:text-purple-200 transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Submit CTA */}
+              <div className="pt-1">
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full py-2.5 px-5 rounded-xl bg-gradient-to-r from-purple-600 via-fuchsia-600 to-pink-500 text-white font-bold text-xs shadow-lg shadow-purple-950/40 hover:opacity-95 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  {isLoading ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <span>Sign in to workspace</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+
+            {/* Quick Demo Access Bar */}
+            <div className="mt-4 pt-3.5 border-t border-purple-500/20">
+              <p className="text-[0.65rem] uppercase font-bold text-purple-300/70 tracking-wider mb-2">
+                Quick Demo Access
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleQuickFill('doctor@medicare.com', 'password123')}
+                  className="flex items-center justify-center gap-1.5 p-1.5 rounded-xl bg-purple-900/30 border border-purple-500/30 text-[0.7rem] font-semibold text-purple-200 hover:bg-purple-800/40 hover:text-white transition-all cursor-pointer"
+                  disabled={isLoading}
+                >
+                  <Stethoscope className="w-3 h-3 text-purple-400" />
+                  Doctor Demo
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleQuickFill('admin@medicare.com', 'password123')}
+                  className="flex items-center justify-center gap-1.5 p-1.5 rounded-xl bg-purple-900/30 border border-purple-500/30 text-[0.7rem] font-semibold text-purple-200 hover:bg-purple-800/40 hover:text-white transition-all cursor-pointer"
+                  disabled={isLoading}
+                >
+                  <KeyRound className="w-3 h-3 text-fuchsia-400" />
+                  Admin Demo
+                </button>
+              </div>
+            </div>
+
+            {/* Footer switch to setup/register */}
+            <div className="mt-4 pt-3 border-t border-purple-500/20 text-center text-[0.75rem] text-purple-300/70">
+              Need a clinic workspace?{' '}
+              <Link
+                href="/register"
+                className="font-bold text-purple-300 hover:text-white underline underline-offset-4 transition-colors"
+              >
+                Start setup
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -276,18 +328,14 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-[calc(100vh-72px)] flex items-center justify-center px-4 py-12 relative">
-      {/* Background decoration */}
-      <div className="page-bg-decor" />
-      <Suspense
-        fallback={
-          <div className="flex items-center justify-center h-64">
-            <div className="w-8 h-8 border-3 border-purple-200 border-t-purple-600 rounded-full animate-spin" />
-          </div>
-        }
-      >
-        <LoginForm />
-      </Suspense>
-    </div>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#0c001a] flex items-center justify-center">
+          <div className="w-8 h-8 border-3 border-purple-500 border-t-transparent rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }

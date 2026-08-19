@@ -15,6 +15,7 @@ export default function ClientLayout({
 }) {
   const pathname = usePathname();
   const isLanding = pathname === '/';
+  const isAuthPage = pathname === '/login' || pathname === '/register';
 
   useEffect(() => {
     seedData();
@@ -25,8 +26,8 @@ export default function ClientLayout({
       <ToastProvider>
         <div className="min-h-screen flex flex-col">
           <WaterEffect />
-          <TopNav />
-          <main className={isLanding ? '' : 'pt-[72px]'}>{children}</main>
+          {!isAuthPage && <TopNav />}
+          <main className={isLanding || isAuthPage ? '' : 'pt-[72px]'}>{children}</main>
         </div>
       </ToastProvider>
     </AuthProvider>

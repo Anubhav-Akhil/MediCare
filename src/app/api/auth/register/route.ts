@@ -7,12 +7,12 @@ import { signToken, AUTH_COOKIE_NAME } from '@/lib/auth';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, email, password, role = 'Doctor', department = 'General Medicine' } = body;
+    const { name, email, password, clinicName = '', role = 'Admin', department = 'Clinic Owner' } = body;
 
     // Validate inputs
     if (!name || !email || !password) {
       return NextResponse.json(
-        { error: 'Please provide name, email, and password.' },
+        { error: 'Please provide clinic owner name, work email, and password.' },
         { status: 400 }
       );
     }
@@ -48,7 +48,8 @@ export async function POST(req: NextRequest) {
       email: normalizedEmail,
       password: hashedPassword,
       role,
-      department,
+      clinicName: clinicName.trim() || 'My Clinic',
+      department: clinicName.trim() || department,
     });
 
     // Create JWT Token
@@ -57,6 +58,7 @@ export async function POST(req: NextRequest) {
       email: newUser.email,
       name: newUser.name,
       role: newUser.role,
+      clinicName: newUser.clinicName,
       department: newUser.department,
     };
 
@@ -66,12 +68,13 @@ export async function POST(req: NextRequest) {
     const response = NextResponse.json(
       {
         success: true,
-        message: 'Account created successfully.',
+        message: 'Clinic workspace created successfully.',
         user: {
           id: newUser._id.toString(),
           name: newUser.name,
           email: newUser.email,
           role: newUser.role,
+          clinicName: newUser.clinicName,
           department: newUser.department,
           createdAt: newUser.createdAt.toISOString(),
         },
