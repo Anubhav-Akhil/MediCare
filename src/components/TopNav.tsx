@@ -38,18 +38,38 @@ export default function TopNav() {
   const { user, logout, isLoading } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [visible, setVisible] = useState(true);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('#about');
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const lastScrollYRef = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 8);
+      const currentScrollY = window.scrollY;
+      const lastScrollY = lastScrollYRef.current;
+
+      setScrolled(currentScrollY > 10);
+
+      // Smart Hide/Show Header on scroll direction
+      if (currentScrollY < 15) {
+        // Always show at top
+        setVisible(true);
+      } else if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        // Scrolling down -> hide navbar
+        setVisible(false);
+        setUserDropdownOpen(false);
+      } else if (currentScrollY < lastScrollY) {
+        // Scrolling up -> show navbar
+        setVisible(true);
+      }
+
+      lastScrollYRef.current = currentScrollY;
 
       // Track active section on landing page
       if (pathname === '/') {
         const sectionIds = ['news', 'features', 'designers', 'about'];
-        const scrollPosition = window.scrollY + 140;
+        const scrollPosition = currentScrollY + 140;
 
         for (const id of sectionIds) {
           const el = document.getElementById(id);
@@ -62,15 +82,13 @@ export default function TopNav() {
           }
         }
 
-        // Top of hero area
-        if (window.scrollY < 200) {
+        if (currentScrollY < 200) {
           setActiveSection('');
         }
       }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, [pathname]);
 
@@ -117,8 +135,14 @@ export default function TopNav() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled || !isLanding ? 'nav-glass' : 'bg-transparent'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out transform ${
+        visible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
+      } ${
+        isLanding
+          ? scrolled
+            ? 'bg-[#0c001a]/85 backdrop-blur-2xl border-b border-purple-500/20 shadow-lg shadow-purple-950/40'
+            : 'bg-transparent'
+          : 'nav-glass'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -141,18 +165,14 @@ export default function TopNav() {
             <div className="flex flex-col">
               <span
                 className={`text-[1.05rem] font-extrabold tracking-tight leading-tight ${
-                  isLanding
-                    ? scrolled ? 'text-[#6f2cab]' : 'text-white'
-                    : 'text-slate-800'
+                  isLanding ? 'text-white' : 'text-slate-800'
                 }`}
               >
                 MediCare
               </span>
               <span
                 className={`text-[0.62rem] font-semibold tracking-[0.24em] uppercase leading-none ${
-                  isLanding
-                    ? scrolled ? 'text-[#a066c6]' : 'text-white/70'
-                    : 'text-purple-500'
+                  isLanding ? 'text-purple-300/80' : 'text-purple-500'
                 }`}
               >
                 Practice Intelligence
@@ -171,13 +191,9 @@ export default function TopNav() {
                     href={item.href}
                     onClick={(e) => handleNavClick(e, item.href)}
                     className={`text-[0.8rem] font-medium tracking-tight transition-all duration-200 cursor-pointer relative py-1 ${
-                      scrolled
-                        ? isActive
-                          ? 'text-[#7d34be] font-bold underline underline-offset-4 decoration-[#d5aef1] decoration-2'
-                          : 'text-[#9b79bb] hover:text-[#7d34be]'
-                        : isActive
-                          ? 'text-white font-bold underline underline-offset-4 decoration-white/70 decoration-2'
-                          : 'text-white/70 hover:text-white'
+                      isActive
+                        ? 'text-white font-bold underline underline-offset-4 decoration-purple-400 decoration-2'
+                        : 'text-white/70 hover:text-white'
                     }`}
                   >
                     {item.label}
@@ -215,8 +231,8 @@ export default function TopNav() {
                 <button
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                   className={`flex items-center gap-2.5 p-1.5 pr-3 rounded-full border transition-all duration-200 cursor-pointer ${
-                    isLanding && !scrolled
-                      ? 'border-white/30 bg-white/15 text-white hover:bg-white/25'
+                    isLanding
+                      ? 'border-white/20 bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm'
                       : 'border-purple-200/70 bg-purple-50/70 text-slate-800 hover:bg-purple-100/70 shadow-xs'
                   }`}
                   aria-expanded={userDropdownOpen}
@@ -289,8 +305,8 @@ export default function TopNav() {
                 <Link
                   href="/login"
                   className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all ${
-                    isLanding && !scrolled
-                      ? 'bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm'
+                    isLanding
+                      ? 'bg-white/10 text-white hover:bg-white/20 border border-white/20 backdrop-blur-sm'
                       : 'bg-purple-50 hover:bg-purple-100 text-purple-700'
                   }`}
                 >
@@ -300,11 +316,7 @@ export default function TopNav() {
 
                 <Link
                   href="/register"
-                  className={`hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold shadow-md transition-all ${
-                    isLanding && !scrolled
-                      ? 'bg-white text-purple-900 hover:bg-white/90 shadow-purple-950/20'
-                      : 'bg-purple-600 text-white hover:bg-purple-700 shadow-purple-600/20'
-                  }`}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold shadow-md transition-all bg-gradient-to-r from-purple-600 to-fuchsia-500 text-white hover:opacity-90 shadow-purple-900/30"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   Get Started
@@ -315,8 +327,8 @@ export default function TopNav() {
             {/* Mobile menu trigger */}
             <button
               className={`md:hidden inline-flex items-center justify-center w-9 h-9 rounded-full transition-all ${
-                isLanding && !scrolled
-                  ? 'border border-white/40 bg-white/20 text-white hover:bg-white/30'
+                isLanding
+                  ? 'border border-white/30 bg-white/10 text-white hover:bg-white/20'
                   : 'btn-ghost-sm p-2 text-slate-700'
               }`}
               onClick={() => setMobileOpen((open) => !open)}
@@ -330,7 +342,7 @@ export default function TopNav() {
 
       {/* Mobile Drawer (Landing) */}
       {mobileOpen && isLanding ? (
-        <div className="border-t border-purple-200/50 bg-white/95 backdrop-blur-2xl animate-fade-in">
+        <div className="border-t border-purple-500/20 bg-[#0c001a]/95 backdrop-blur-2xl animate-fade-in shadow-2xl">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col gap-2">
             <div className="flex flex-col gap-1">
               {landingNavItems.map((item) => {
@@ -345,8 +357,8 @@ export default function TopNav() {
                     }}
                     className={`rounded-xl px-3 py-2 text-sm font-semibold transition-colors ${
                       isActive
-                        ? 'bg-purple-100/80 text-purple-900 font-bold'
-                        : 'text-[#6b2aa3] hover:bg-[#f7efff]'
+                        ? 'bg-purple-900/50 text-white font-bold border border-purple-500/40'
+                        : 'text-white/80 hover:bg-white/10'
                     }`}
                   >
                     {item.label}
@@ -359,7 +371,7 @@ export default function TopNav() {
                 <Link
                   href="/dashboard"
                   onClick={() => setMobileOpen(false)}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#5b21b6] px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-purple-900/20 hover:bg-[#4c1d95]"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-fuchsia-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-purple-900/40"
                 >
                   <Sparkles className="w-4 h-4" />
                   Go to Dashboard
@@ -369,7 +381,7 @@ export default function TopNav() {
                   <Link
                     href="/login"
                     onClick={() => setMobileOpen(false)}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-purple-100 text-purple-800 px-5 py-2.5 text-sm font-bold hover:bg-purple-200"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-white/10 text-white border border-white/20 px-5 py-2.5 text-sm font-bold hover:bg-white/20"
                   >
                     <LogIn className="w-4 h-4" />
                     Sign In
@@ -377,7 +389,7 @@ export default function TopNav() {
                   <Link
                     href="/register"
                     onClick={() => setMobileOpen(false)}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#5b21b6] px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-purple-900/20 hover:bg-[#4c1d95]"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-fuchsia-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-purple-900/40"
                   >
                     <Sparkles className="w-4 h-4" />
                     Create Account
@@ -417,7 +429,7 @@ export default function TopNav() {
                   setMobileOpen(false);
                   logout();
                 }}
-                className="w-full flex items-center justify-center gap-2 text-rose-600 font-bold text-sm py-2 px-4 rounded-xl hover:bg-rose-50 mt-2"
+                className="w-full flex items-center justify-center gap-2 text-rose-600 font-bold text-sm py-2 px-4 rounded-xl hover:bg-rose-50 mt-2 cursor-pointer"
               >
                 <LogOut className="w-4 h-4" />
                 Sign Out
