@@ -10,8 +10,12 @@
   },
   "dependencies": {
     "@tanstack/react-form": "^1.33.3",
+    "@types/bcryptjs": "^2.4.6",
+    "bcryptjs": "^3.0.3",
     "daisyui": "^5.7.15",
+    "jose": "^6.2.9",
     "lucide-react": "^1.28.0",
+    "mongoose": "^9.9.3",
     "next": "16.3.0",
     "react": "19.2.8",
     "react-dom": "19.2.8"

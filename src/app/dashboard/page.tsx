@@ -33,21 +33,25 @@ export default function DashboardPage() {
   const [upcomingAppointments, setUpcomingAppointments] = useState<Appointment[]>([]);
 
   useEffect(() => {
-    setStats(getDashboardStats());
-    const patients = getPatients();
-    setRecentPatients(
-      patients
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .slice(0, 5)
-    );
-    const today = new Date().toISOString().split('T')[0];
-    const appointments = getAppointments();
-    setUpcomingAppointments(
-      appointments
-        .filter((a) => a.date >= today && a.status === 'Scheduled')
-        .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time))
-        .slice(0, 5)
-    );
+    const timer = setTimeout(() => {
+      setStats(getDashboardStats());
+      const patients = getPatients();
+      setRecentPatients(
+        patients
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .slice(0, 5)
+      );
+      const today = new Date().toISOString().split('T')[0];
+      const appointments = getAppointments();
+      setUpcomingAppointments(
+        appointments
+          .filter((a) => a.date >= today && a.status === 'Scheduled')
+          .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time))
+          .slice(0, 5)
+      );
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, []);
 
   if (!stats) {
