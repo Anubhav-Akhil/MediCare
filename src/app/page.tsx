@@ -257,20 +257,19 @@ export default function LandingPage() {
               users even enter the product.
             </p>
             <div className={styles.ctaRow}>
-              <Link href="/dashboard" className={styles.primaryCta}>
+              <Link href="/register" className={styles.primaryCta}>
                 <span className={styles.ctaIcon}>
                   <CheckCircle2 size={16} />
                 </span>
-                Boost Now
+                Get Started
               </Link>
-              <button
-                type="button"
-                onClick={() => scrollToSection('about')}
+              <Link
+                href="/login"
                 className={styles.secondaryCta}
               >
-                Explore More
+                Sign In
                 <ArrowRight size={16} />
-              </button>
+              </Link>
             </div>
           </div>
 
