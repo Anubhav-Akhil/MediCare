@@ -39,13 +39,57 @@ export default function TopNav() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>('#about');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 8);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 8);
+
+      // Track active section on landing page
+      if (pathname === '/') {
+        const sectionIds = ['news', 'features', 'designers', 'about'];
+        const scrollPosition = window.scrollY + 140;
+
+        for (const id of sectionIds) {
+          const el = document.getElementById(id);
+          if (el) {
+            const top = el.offsetTop;
+            if (scrollPosition >= top) {
+              setActiveSection(`#${id}`);
+              return;
+            }
+          }
+        }
+
+        // Top of hero area
+        if (window.scrollY < 200) {
+          setActiveSection('');
+        }
+      }
+    };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [pathname]);
+
+  // Handle smooth scroll and active state on landing nav click
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
+    if (pathname === '/') {
+      e.preventDefault();
+      setActiveSection(href);
+      const targetId = href.replace('#', '');
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+      window.history.replaceState(null, '', href);
+    }
+  };
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -119,23 +163,27 @@ export default function TopNav() {
           {/* Navigation Links */}
           {isLanding ? (
             <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-8">
-              {landingNavItems.map((item, index) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`text-[0.8rem] font-medium tracking-tight transition-colors ${
-                    scrolled
-                      ? index === 0
-                        ? 'text-[#7d34be] underline underline-offset-4 decoration-[#d5aef1] hover:text-[#7d34be]'
-                        : 'text-[#9b79bb] hover:text-[#7d34be]'
-                      : index === 0
-                        ? 'text-white underline underline-offset-4 decoration-white/50 hover:text-white'
-                        : 'text-white/70 hover:text-white'
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {landingNavItems.map((item) => {
+                const isActive = activeSection === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={(e) => handleNavClick(e, item.href)}
+                    className={`text-[0.8rem] font-medium tracking-tight transition-all duration-200 cursor-pointer relative py-1 ${
+                      scrolled
+                        ? isActive
+                          ? 'text-[#7d34be] font-bold underline underline-offset-4 decoration-[#d5aef1] decoration-2'
+                          : 'text-[#9b79bb] hover:text-[#7d34be]'
+                        : isActive
+                          ? 'text-white font-bold underline underline-offset-4 decoration-white/70 decoration-2'
+                          : 'text-white/70 hover:text-white'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
             </div>
           ) : !isAuthPage ? (
             <div className="hidden md:flex items-center gap-1">
@@ -285,16 +333,26 @@ export default function TopNav() {
         <div className="border-t border-purple-200/50 bg-white/95 backdrop-blur-2xl animate-fade-in">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col gap-2">
             <div className="flex flex-col gap-1">
-              {landingNavItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="rounded-xl px-3 py-2 text-sm font-semibold text-[#6b2aa3] hover:bg-[#f7efff]"
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {landingNavItems.map((item) => {
+                const isActive = activeSection === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={(e) => {
+                      handleNavClick(e, item.href);
+                      setMobileOpen(false);
+                    }}
+                    className={`rounded-xl px-3 py-2 text-sm font-semibold transition-colors ${
+                      isActive
+                        ? 'bg-purple-100/80 text-purple-900 font-bold'
+                        : 'text-[#6b2aa3] hover:bg-[#f7efff]'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
             </div>
             <div className="pt-2 flex flex-col gap-2">
               {user ? (
