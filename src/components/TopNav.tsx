@@ -43,6 +43,7 @@ export default function TopNav() {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('#operations');
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const lastScrollYRef = useRef(0);
   const mobileOpenRef = useRef(mobileOpen);
 
   useEffect(() => {
