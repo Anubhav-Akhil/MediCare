@@ -47,3 +47,4 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
 }
 
 export default connectToDatabase;
+
