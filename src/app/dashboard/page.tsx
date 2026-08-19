@@ -133,42 +133,44 @@ export default function DashboardPage() {
               View All <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
-          <table className="pro-table">
-            <thead>
-              <tr>
-                <th>Patient</th>
-                <th>Age</th>
-                <th>Blood</th>
-                <th>Phone</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentPatients.map((patient) => (
-                <tr key={patient.id}>
-                  <td>
-                    <div className="flex items-center gap-3">
-                      <div className="avatar-circle avatar-purple" style={{ width: 34, height: 34, borderRadius: 10, fontSize: '0.7rem' }}>
-                        {patient.firstName[0]}{patient.lastName[0]}
-                      </div>
-                      <div>
-                        <p className="font-semibold text-slate-800 text-sm">
-                          {patient.firstName} {patient.lastName}
-                        </p>
-                        <p className="text-xs text-slate-400">{patient.gender}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="text-sm text-slate-600">{patient.age}</td>
-                  <td>
-                    <span className="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md">
-                      {patient.bloodGroup}
-                    </span>
-                  </td>
-                  <td className="text-sm text-slate-500">{patient.phone}</td>
+          <div className="overflow-x-auto">
+            <table className="pro-table">
+              <thead>
+                <tr>
+                  <th>Patient</th>
+                  <th>Age</th>
+                  <th>Blood</th>
+                  <th>Phone</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {recentPatients.map((patient) => (
+                  <tr key={patient.id}>
+                    <td>
+                      <div className="flex items-center gap-3">
+                        <div className="avatar-circle avatar-purple" style={{ width: 34, height: 34, borderRadius: 10, fontSize: '0.7rem' }}>
+                          {patient.firstName[0]}{patient.lastName[0]}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-slate-800 text-sm whitespace-nowrap">
+                            {patient.firstName} {patient.lastName}
+                          </p>
+                          <p className="text-xs text-slate-400">{patient.gender}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="text-sm text-slate-600">{patient.age}</td>
+                    <td>
+                      <span className="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md">
+                        {patient.bloodGroup}
+                      </span>
+                    </td>
+                    <td className="text-sm text-slate-500 whitespace-nowrap">{patient.phone}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Upcoming Appointments */}

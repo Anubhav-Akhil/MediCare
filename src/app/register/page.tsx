@@ -86,7 +86,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="h-screen max-h-screen bg-[#0c001a] text-white flex flex-col justify-center px-4 sm:px-6 lg:px-8 relative overflow-y-auto lg:overflow-hidden">
+    <div className="min-h-screen lg:h-screen lg:max-h-screen bg-[#0c001a] text-white flex flex-col justify-center px-4 sm:px-6 lg:px-8 relative overflow-y-auto lg:overflow-hidden py-16 sm:py-20 lg:py-0">
       {/* Top Right: Modern Back to Home Pill */}
       <div className="absolute top-5 right-5 sm:top-7 sm:right-7 z-30">
         <Link

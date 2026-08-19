@@ -310,27 +310,27 @@ export default function Home() {
           <p className="text-center text-xs font-bold uppercase tracking-[0.2em] text-purple-300/80 mb-6">
             One system for every clinic handoff
           </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div className="border-r border-purple-500/20 last:border-none">
-              <p className="text-3xl sm:text-4xl font-black text-white">01</p>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-6 gap-x-4 text-center">
+            <div className="border-r border-purple-500/20 pb-2 lg:pb-0">
+              <p className="text-2xl sm:text-3xl lg:text-4xl font-black text-white">01</p>
               <p className="text-xs sm:text-sm font-semibold text-purple-200/80 mt-1">
                 One connected workspace
               </p>
             </div>
-            <div className="border-r border-purple-500/20 last:border-none">
-              <p className="text-3xl sm:text-4xl font-black text-purple-300">06</p>
+            <div className="lg:border-r border-purple-500/20 pb-2 lg:pb-0">
+              <p className="text-2xl sm:text-3xl lg:text-4xl font-black text-purple-300">06</p>
               <p className="text-xs sm:text-sm font-semibold text-purple-200/80 mt-1">
                 Care steps in one flow
               </p>
             </div>
-            <div className="border-r border-purple-500/20 last:border-none">
-              <p className="text-3xl sm:text-4xl font-black text-fuchsia-300">24/7</p>
+            <div className="border-r border-purple-500/20 pt-2 lg:pt-0">
+              <p className="text-2xl sm:text-3xl lg:text-4xl font-black text-fuchsia-300">24/7</p>
               <p className="text-xs sm:text-sm font-semibold text-purple-200/80 mt-1">
                 Patient context available
               </p>
             </div>
-            <div>
-              <p className="text-3xl sm:text-4xl font-black text-pink-300">100%</p>
+            <div className="pt-2 lg:pt-0">
+              <p className="text-2xl sm:text-3xl lg:text-4xl font-black text-pink-300">100%</p>
               <p className="text-xs sm:text-sm font-semibold text-purple-200/80 mt-1">
                 Role-aware by design
               </p>
@@ -800,9 +800,9 @@ export default function Home() {
       {/* ── Footer ─────────────────────────────────────────── */}
       <footer className="relative z-10 border-t border-purple-500/20 bg-[#080012] py-14">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 pb-12 border-b border-purple-500/20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8 pb-12 border-b border-purple-500/20">
             {/* Brand Column */}
-            <div className="col-span-2">
+            <div className="sm:col-span-2">
               <div className="flex items-center gap-2.5 mb-3">
                 <div className="w-9 h-9 rounded-xl overflow-hidden shadow-md">
                   <Image src="/logo.svg" alt="MediCare" width={36} height={36} className="w-full h-full object-cover" />
