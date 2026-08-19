@@ -45,46 +45,58 @@ export default function TopNav() {
   const lastScrollYRef = useRef(0);
 
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      const lastScrollY = lastScrollYRef.current;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+          const lastScrollY = lastScrollYRef.current;
+          const diff = currentScrollY - lastScrollY;
 
-      setScrolled(currentScrollY > 10);
+          setScrolled(currentScrollY > 15);
 
-      // Smart Hide/Show Header on scroll direction
-      if (currentScrollY < 15) {
-        // Always show at top
-        setVisible(true);
-      } else if (currentScrollY > lastScrollY && currentScrollY > 80) {
-        // Scrolling down -> hide navbar
-        setVisible(false);
-        setUserDropdownOpen(false);
-      } else if (currentScrollY < lastScrollY) {
-        // Scrolling up -> show navbar
-        setVisible(true);
-      }
+          // Smart Smooth Hide/Show Header on scroll direction with hysteresis
+          if (currentScrollY <= 15) {
+            // Always show when near top
+            setVisible(true);
+          } else if (diff > 8 && currentScrollY > 80) {
+            // Scrolling down firmly -> smoothly hide
+            setVisible(false);
+            setUserDropdownOpen(false);
+          } else if (diff < -8) {
+            // Scrolling up firmly -> smoothly reveal
+            setVisible(true);
+          }
 
-      lastScrollYRef.current = currentScrollY;
+          lastScrollYRef.current = currentScrollY;
 
-      // Track active section on landing page
-      if (pathname === '/') {
-        const sectionIds = ['news', 'features', 'designers', 'about'];
-        const scrollPosition = currentScrollY + 140;
+          // Track active section on landing page
+          if (pathname === '/') {
+            const sectionIds = ['news', 'features', 'designers', 'about'];
+            const scrollPosition = currentScrollY + 140;
 
-        for (const id of sectionIds) {
-          const el = document.getElementById(id);
-          if (el) {
-            const top = el.offsetTop;
-            if (scrollPosition >= top) {
-              setActiveSection(`#${id}`);
-              return;
+            for (const id of sectionIds) {
+              const el = document.getElementById(id);
+              if (el) {
+                const top = el.offsetTop;
+                if (scrollPosition >= top) {
+                  setActiveSection(`#${id}`);
+                  ticking = false;
+                  return;
+                }
+              }
+            }
+
+            if (currentScrollY < 200) {
+              setActiveSection('');
             }
           }
-        }
 
-        if (currentScrollY < 200) {
-          setActiveSection('');
-        }
+          ticking = false;
+        });
+
+        ticking = true;
       }
     };
 
@@ -135,13 +147,13 @@ export default function TopNav() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out transform ${
+      className={`fixed top-0 left-0 right-0 z-50 nav-smart-header transform ${
         visible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
       } ${
         isLanding
           ? scrolled
-            ? 'bg-[#0c001a]/85 backdrop-blur-2xl border-b border-purple-500/20 shadow-lg shadow-purple-950/40'
-            : 'bg-transparent'
+            ? 'nav-landing-glass'
+            : 'bg-transparent border-b border-transparent'
           : 'nav-glass'
       }`}
     >
@@ -150,7 +162,7 @@ export default function TopNav() {
           {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <div
-              className={`w-9 h-9 rounded-[12px] overflow-hidden flex items-center justify-center transition-transform group-hover:scale-105 ${
+              className={`w-9 h-9 rounded-[12px] overflow-hidden flex items-center justify-center transition-transform duration-300 group-hover:scale-105 ${
                 isLanding ? 'shadow-sm' : 'shadow-md group-hover:shadow-lg'
               }`}
             >
@@ -164,14 +176,14 @@ export default function TopNav() {
             </div>
             <div className="flex flex-col">
               <span
-                className={`text-[1.05rem] font-extrabold tracking-tight leading-tight ${
+                className={`text-[1.05rem] font-extrabold tracking-tight leading-tight transition-colors duration-300 ${
                   isLanding ? 'text-white' : 'text-slate-800'
                 }`}
               >
                 MediCare
               </span>
               <span
-                className={`text-[0.62rem] font-semibold tracking-[0.24em] uppercase leading-none ${
+                className={`text-[0.62rem] font-semibold tracking-[0.24em] uppercase leading-none transition-colors duration-300 ${
                   isLanding ? 'text-purple-300/80' : 'text-purple-500'
                 }`}
               >
@@ -190,7 +202,7 @@ export default function TopNav() {
                     key={item.href}
                     href={item.href}
                     onClick={(e) => handleNavClick(e, item.href)}
-                    className={`text-[0.8rem] font-medium tracking-tight transition-all duration-200 cursor-pointer relative py-1 ${
+                    className={`text-[0.8rem] font-medium tracking-tight transition-all duration-300 cursor-pointer relative py-1 ${
                       isActive
                         ? 'text-white font-bold underline underline-offset-4 decoration-purple-400 decoration-2'
                         : 'text-white/70 hover:text-white'
@@ -230,7 +242,7 @@ export default function TopNav() {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className={`flex items-center gap-2.5 p-1.5 pr-3 rounded-full border transition-all duration-200 cursor-pointer ${
+                  className={`flex items-center gap-2.5 p-1.5 pr-3 rounded-full border transition-all duration-300 cursor-pointer ${
                     isLanding
                       ? 'border-white/20 bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm'
                       : 'border-purple-200/70 bg-purple-50/70 text-slate-800 hover:bg-purple-100/70 shadow-xs'
@@ -304,7 +316,7 @@ export default function TopNav() {
               <div className="flex items-center gap-2">
                 <Link
                   href="/login"
-                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all ${
+                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ${
                     isLanding
                       ? 'bg-white/10 text-white hover:bg-white/20 border border-white/20 backdrop-blur-sm'
                       : 'bg-purple-50 hover:bg-purple-100 text-purple-700'
@@ -316,7 +328,7 @@ export default function TopNav() {
 
                 <Link
                   href="/register"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold shadow-md transition-all bg-gradient-to-r from-purple-600 to-fuchsia-500 text-white hover:opacity-90 shadow-purple-900/30"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold shadow-md transition-all duration-300 bg-gradient-to-r from-purple-600 to-fuchsia-500 text-white hover:opacity-90 shadow-purple-900/30 hover:scale-[1.02]"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   Get Started
@@ -326,7 +338,7 @@ export default function TopNav() {
 
             {/* Mobile menu trigger */}
             <button
-              className={`md:hidden inline-flex items-center justify-center w-9 h-9 rounded-full transition-all ${
+              className={`md:hidden inline-flex items-center justify-center w-9 h-9 rounded-full transition-all duration-300 ${
                 isLanding
                   ? 'border border-white/30 bg-white/10 text-white hover:bg-white/20'
                   : 'btn-ghost-sm p-2 text-slate-700'
