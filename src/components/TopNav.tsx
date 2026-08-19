@@ -43,7 +43,11 @@ export default function TopNav() {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('#operations');
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const lastScrollYRef = useRef(0);
+  const mobileOpenRef = useRef(mobileOpen);
+
+  useEffect(() => {
+    mobileOpenRef.current = mobileOpen;
+  }, [mobileOpen]);
 
   useEffect(() => {
     let ticking = false;
@@ -58,8 +62,8 @@ export default function TopNav() {
           setScrolled(currentScrollY > 15);
 
           // Smart Smooth Hide/Show Header on scroll direction with hysteresis
-          if (currentScrollY <= 15) {
-            // Always show when near top
+          if (mobileOpenRef.current || currentScrollY <= 15) {
+            // Always show when mobile menu is open or near top
             setVisible(true);
           } else if (diff > 8 && currentScrollY > 80) {
             // Scrolling down firmly -> smoothly hide
@@ -141,14 +145,24 @@ export default function TopNav() {
   }
 
   // Get user initials for avatar
-  const initials = user?.name
-    ? user.name
+  const cleanName = user?.name?.replace(/^Dr\.\s*/i, '').trim();
+  const initials = cleanName
+    ? cleanName
         .split(' ')
+        .filter(Boolean)
         .map((n) => n[0])
         .slice(0, 2)
         .join('')
         .toUpperCase()
-    : 'U';
+    : user?.name
+      ? user.name
+          .split(' ')
+          .filter(Boolean)
+          .map((n) => n[0])
+          .slice(0, 2)
+          .join('')
+          .toUpperCase()
+      : 'U';
 
   return (
     <nav
@@ -201,7 +215,7 @@ export default function TopNav() {
             </div>
           </Link>
 
-          {/* Navigation Links */}
+          {/* Navigation Links (Desktop) */}
           {isLanding ? (
             <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-8">
               {landingNavItems.map((item) => {
@@ -261,11 +275,11 @@ export default function TopNav() {
                   <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-fuchsia-500 text-white font-bold text-xs flex items-center justify-center shadow-xs">
                     {initials}
                   </div>
-                  <div className="text-left hidden sm:block">
-                    <p className="text-xs font-bold leading-none tracking-tight">
-                      {user.name.split(' ')[0]}
+                  <div className="text-left hidden sm:block max-w-[140px]">
+                    <p className="text-xs font-bold leading-none tracking-tight truncate">
+                      {user.name}
                     </p>
-                    <p className="text-[0.65rem] opacity-75 font-medium leading-tight">
+                    <p className="text-[0.65rem] opacity-75 font-medium leading-tight mt-0.5">
                       {user.role}
                     </p>
                   </div>
@@ -345,120 +359,156 @@ export default function TopNav() {
               </div>
             )}
 
-            {/* Mobile menu trigger */}
+            {/* Mobile / 3 Horizontal Lines Menu Trigger */}
             <button
-              className={`md:hidden inline-flex items-center justify-center w-9 h-9 rounded-full transition-all duration-300 ${
+              type="button"
+              className={`md:hidden inline-flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-200 cursor-pointer ${
                 isLanding
-                  ? 'border border-white/30 bg-white/10 text-white hover:bg-white/20'
-                  : 'btn-ghost-sm p-2 text-slate-700'
+                  ? 'border border-white/20 bg-white/10 text-white hover:bg-white/20 active:scale-95'
+                  : 'border border-purple-200/70 bg-purple-50/70 text-purple-900 hover:bg-purple-100 active:scale-95 shadow-xs'
               }`}
               onClick={() => setMobileOpen((open) => !open)}
-              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+              aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
             >
-              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {mobileOpen ? (
+                <X className="w-5 h-5 text-current" />
+              ) : (
+                <Menu className="w-5 h-5 text-current" />
+              )}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Drawer (Landing) */}
-      {mobileOpen && isLanding ? (
-        <div className="border-t border-purple-500/20 bg-[#0c001a]/95 backdrop-blur-2xl animate-fade-in shadow-2xl">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col gap-2">
-            <div className="flex flex-col gap-1">
-              {landingNavItems.map((item) => {
-                const isActive = activeSection === item.href;
+      {/* Mobile Drawer (Landing Page) */}
+      {mobileOpen && isLanding && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 md:hidden"
+            onClick={() => setMobileOpen(false)}
+          />
+          <div className="relative z-50 md:hidden border-t border-purple-500/20 bg-[#0c001a]/95 backdrop-blur-2xl animate-fade-in shadow-2xl">
+            <div className="max-w-7xl mx-auto px-4 py-5 flex flex-col gap-3">
+              <div className="flex flex-col gap-1.5">
+                {landingNavItems.map((item) => {
+                  const isActive = activeSection === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={(e) => {
+                        handleNavClick(e, item.href);
+                        setMobileOpen(false);
+                      }}
+                      className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition-all ${
+                        isActive
+                          ? 'bg-purple-900/50 text-white font-bold border border-purple-500/40 shadow-sm'
+                          : 'text-white/80 hover:bg-white/10 hover:text-white'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </div>
+              <div className="pt-3 border-t border-purple-500/20 flex flex-col gap-2">
+                {user ? (
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setMobileOpen(false)}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-500 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-purple-900/40"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    Go to Dashboard
+                  </Link>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      onClick={() => setMobileOpen(false)}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 text-white border border-white/20 px-5 py-2.5 text-sm font-bold hover:bg-white/20"
+                    >
+                      <LogIn className="w-4 h-4" />
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/register"
+                      onClick={() => setMobileOpen(false)}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-500 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-purple-900/40"
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      Create Account
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Mobile Drawer (App Dashboard & Other Pages) */}
+      {mobileOpen && !isLanding && !isAuthPage && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 md:hidden"
+            onClick={() => setMobileOpen(false)}
+          />
+          <div className="relative z-50 md:hidden bg-white/95 backdrop-blur-2xl border-t border-purple-100 shadow-2xl animate-fade-in">
+            <div className="px-4 py-4 space-y-2">
+              {user && (
+                <div className="p-3 mb-2 rounded-2xl bg-purple-50/80 border border-purple-100 flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-600 to-fuchsia-500 text-white font-bold text-sm flex items-center justify-center shadow-xs">
+                    {initials}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-slate-800 truncate">{user.name}</p>
+                    <p className="text-xs text-purple-600 font-semibold">{user.role} • {user.department || 'General'}</p>
+                  </div>
+                </div>
+              )}
+
+              {appNavItems.map((item) => {
+                const Icon = item.icon;
+                const isActive =
+                  pathname === item.href ||
+                  (item.href !== '/dashboard' && pathname.startsWith(item.href));
+
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    onClick={(e) => {
-                      handleNavClick(e, item.href);
-                      setMobileOpen(false);
-                    }}
-                    className={`rounded-xl px-3 py-2 text-sm font-semibold transition-colors ${
+                    onClick={() => setMobileOpen(false)}
+                    className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${
                       isActive
-                        ? 'bg-purple-900/50 text-white font-bold border border-purple-500/40'
-                        : 'text-white/80 hover:bg-white/10'
+                        ? 'bg-purple-600 text-white shadow-md shadow-purple-600/20'
+                        : 'text-slate-700 hover:bg-purple-50 hover:text-purple-700'
                     }`}
                   >
+                    <Icon className="w-4 h-4" />
                     {item.label}
                   </Link>
                 );
               })}
-            </div>
-            <div className="pt-2 flex flex-col gap-2">
+
               {user ? (
-                <Link
-                  href="/dashboard"
-                  onClick={() => setMobileOpen(false)}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-fuchsia-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-purple-900/40"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  Go to Dashboard
-                </Link>
-              ) : (
-                <>
-                  <Link
-                    href="/login"
-                    onClick={() => setMobileOpen(false)}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-white/10 text-white border border-white/20 px-5 py-2.5 text-sm font-bold hover:bg-white/20"
+                <div className="pt-2 border-t border-purple-100">
+                  <button
+                    onClick={() => {
+                      setMobileOpen(false);
+                      logout();
+                    }}
+                    className="w-full flex items-center justify-center gap-2 text-rose-600 font-bold text-sm py-2.5 px-4 rounded-xl hover:bg-rose-50 transition-colors cursor-pointer"
                   >
-                    <LogIn className="w-4 h-4" />
-                    Sign In
-                  </Link>
-                  <Link
-                    href="/register"
-                    onClick={() => setMobileOpen(false)}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-fuchsia-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-purple-900/40"
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    Create Account
-                  </Link>
-                </>
-              )}
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                  </button>
+                </div>
+              ) : null}
             </div>
           </div>
-        </div>
-      ) : null}
-
-      {/* Mobile Drawer (App) */}
-      {mobileOpen && !isLanding && !isAuthPage ? (
-        <div className="md:hidden glass-strong border-t border-purple-200/30 animate-fade-in">
-          <div className="px-4 py-3 space-y-1">
-            {appNavItems.map((item) => {
-              const Icon = item.icon;
-              const isActive =
-                pathname === item.href ||
-                (item.href !== '/dashboard' && pathname.startsWith(item.href));
-
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={`nav-link w-full ${isActive ? 'active' : ''}`}
-                >
-                  <Icon className="w-4 h-4" />
-                  {item.label}
-                </Link>
-              );
-            })}
-            {user ? (
-              <button
-                onClick={() => {
-                  setMobileOpen(false);
-                  logout();
-                }}
-                className="w-full flex items-center justify-center gap-2 text-rose-600 font-bold text-sm py-2 px-4 rounded-xl hover:bg-rose-50 mt-2 cursor-pointer"
-              >
-                <LogOut className="w-4 h-4" />
-                Sign Out
-              </button>
-            ) : null}
-          </div>
-        </div>
-      ) : null}
+        </>
+      )}
     </nav>
   );
 }
