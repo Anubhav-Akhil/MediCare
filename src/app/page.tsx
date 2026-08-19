@@ -95,9 +95,12 @@ export default function Home() {
             muted
             playsInline
             preload="auto"
+            poster="/landing-space-bg.png"
             src="/back_mvp.mp4"
+            onCanPlay={() => setVideoLoaded(true)}
             onCanPlayThrough={() => setVideoLoaded(true)}
             onLoadedData={() => setVideoLoaded(true)}
+            onPlaying={() => setVideoLoaded(true)}
             className={`${styles.heroVideo} ${videoLoaded ? styles.heroVideoReady : ''}`}
           />
           <div className={styles.heroShade} />

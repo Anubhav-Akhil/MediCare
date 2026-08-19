@@ -78,6 +78,11 @@
 .heroBackdrop {
   position: absolute;
   inset: 0;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(124, 58, 237, 0.35), transparent 60%),
+    radial-gradient(circle at 80% 65%, rgba(217, 70, 239, 0.25), transparent 55%),
+    url('/landing-space-bg.png') center/cover no-repeat,
+    #0c001a;
 }
 
 .heroVideo {
