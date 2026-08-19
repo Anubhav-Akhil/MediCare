@@ -211,7 +211,7 @@ export default function TopNav() {
                   isLanding ? 'text-purple-400/70' : 'text-purple-400'
                 }`}
               >
-                Practice Intelligence
+                Clinic Workshop
               </span>
             </div>
           </Link>

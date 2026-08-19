@@ -47,7 +47,7 @@ export default function Sidebar() {
               MediCare
             </h1>
             <p className="text-purple-400/60 text-[0.55rem] font-bold tracking-[0.2em] uppercase leading-none">
-              Practice Intelligence
+              Clinic Workshop
             </p>
           </div>
         )}
