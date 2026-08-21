@@ -91,7 +91,7 @@
   inset: 0;
   background: url('/landing-space-portrait.jpg') center top / cover no-repeat;
   filter: contrast(1.06) saturate(1.2) brightness(1.02);
-  z-index: 1;
+  z-index: 0;
 }
 
 .heroVideo {
@@ -109,10 +109,21 @@
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   will-change: opacity;
+  z-index: 1;
 }
 
-.heroVideoReady {
-  opacity: 1;
+.heroVideoDesktopGroup {
+  position: absolute;
+  inset: 0;
+  display: block;
+  z-index: 1;
+}
+
+.heroVideoMobileGroup {
+  position: absolute;
+  inset: 0;
+  display: none;
+  z-index: 1;
 }
 
 .heroShade {
@@ -821,8 +832,12 @@
     display: block;
   }
 
-  .heroVideo {
-    display: none;
+  .heroVideoDesktopGroup {
+    display: none !important;
+  }
+
+  .heroVideoMobileGroup {
+    display: block !important;
   }
 }
 
@@ -999,8 +1014,12 @@
 }
 
 @media (max-width: 480px) {
-  .heroVideo {
+  .heroVideoDesktop {
     object-position: 26% center;
+  }
+
+  .heroVideoMobile {
+    object-position: center center;
   }
 
   .heroInner {

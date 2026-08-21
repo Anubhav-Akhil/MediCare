@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 
 import styles from './page.module.css';
+import SeamlessVideoPlayer from '@/components/SeamlessVideoPlayer';
 
 const sectionIds = [
   'hero',
@@ -35,21 +36,7 @@ const sectionIds = [
 ];
 
 export default function Home() {
-  const [videoLoaded, setVideoLoaded] = useState(false);
   const [activeSectionIndex, setActiveSectionIndex] = useState(0);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setVideoLoaded(true);
-    }, 600);
-
-    if (videoRef.current && videoRef.current.readyState >= 2) {
-      setVideoLoaded(true);
-    }
-
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -103,22 +90,24 @@ export default function Home() {
       <section id="hero" className={styles.hero}>
         <div className={styles.heroBackdrop}>
           <div className={styles.heroPortraitBg} aria-hidden="true" />
-          <video
-            ref={videoRef}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            poster="/landing-space-bg.png"
+
+          {/* Desktop/Landscape Video Background (Seamless Loop Crossfade) */}
+          <SeamlessVideoPlayer
             src="/back_mvp.mp4"
-            onCanPlay={() => setVideoLoaded(true)}
-            onCanPlayThrough={() => setVideoLoaded(true)}
-            onLoadedData={() => setVideoLoaded(true)}
-            onLoadedMetadata={() => setVideoLoaded(true)}
-            onPlaying={() => setVideoLoaded(true)}
-            className={`${styles.heroVideo} ${videoLoaded ? styles.heroVideoReady : ''}`}
+            poster="/landing-space-bg.png"
+            className={styles.heroVideoDesktopGroup}
+            crossfadeDuration={0.85}
           />
+
+          {/* Mobile/Portrait Video Background (Seamless Loop Crossfade) */}
+          <SeamlessVideoPlayer
+            src="/back_mvp_potrait.mp4"
+            poster="/landing-space-portrait.jpg"
+            className={styles.heroVideoMobileGroup}
+            videoStyle={{ objectPosition: 'center center' }}
+            crossfadeDuration={0.85}
+          />
+
           <div className={styles.heroShade} />
           <div className={styles.heroVignette} />
           <div className={styles.heroGlow} />
