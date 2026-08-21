@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -37,6 +37,19 @@ const sectionIds = [
 export default function Home() {
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [activeSectionIndex, setActiveSectionIndex] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setVideoLoaded(true);
+    }, 600);
+
+    if (videoRef.current && videoRef.current.readyState >= 2) {
+      setVideoLoaded(true);
+    }
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -86,10 +99,12 @@ export default function Home() {
         ))}
       </div>
 
-      {/* ── Section 1: Hero (Full-Screen 100vh Video Background) ───────────────── */}
+      {/* ── Section 1: Hero (Full-Screen 100vh Video Background / Portrait Canvas on Mobile) ── */}
       <section id="hero" className={styles.hero}>
         <div className={styles.heroBackdrop}>
+          <div className={styles.heroPortraitBg} aria-hidden="true" />
           <video
+            ref={videoRef}
             autoPlay
             loop
             muted
@@ -100,6 +115,7 @@ export default function Home() {
             onCanPlay={() => setVideoLoaded(true)}
             onCanPlayThrough={() => setVideoLoaded(true)}
             onLoadedData={() => setVideoLoaded(true)}
+            onLoadedMetadata={() => setVideoLoaded(true)}
             onPlaying={() => setVideoLoaded(true)}
             className={`${styles.heroVideo} ${videoLoaded ? styles.heroVideoReady : ''}`}
           />
