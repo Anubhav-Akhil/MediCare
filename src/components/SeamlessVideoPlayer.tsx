@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 
 interface SeamlessVideoPlayerProps {
   src: string;
-  poster: string;
+  poster?: string;
   className?: string;
   videoStyle?: React.CSSProperties;
   crossfadeDuration?: number; // In seconds, e.g. 0.85s
@@ -19,6 +19,7 @@ export default function SeamlessVideoPlayer({
 }: SeamlessVideoPlayerProps) {
   const [activePlayer, setActivePlayer] = useState<'A' | 'B'>('A');
   const [isReady, setIsReady] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const playerARef = useRef<HTMLVideoElement>(null);
   const playerBRef = useRef<HTMLVideoElement>(null);
@@ -39,12 +40,12 @@ export default function SeamlessVideoPlayer({
     pB.currentTime = 0;
     pA.play().catch(() => {});
     setActivePlayer('A');
+    setIsTransitioning(false);
     isTransitioningRef.current = false;
 
-    // Graceful fallback for initial display
     const readyTimer = setTimeout(() => {
       setIsReady(true);
-    }, 600);
+    }, 400);
 
     const handleVisibilityChange = () => {
       if (!document.hidden) {
@@ -73,13 +74,13 @@ export default function SeamlessVideoPlayer({
       if (activePlayerRef.current === 'A' && pA && !isTransitioningRef.current) {
         if (pA.duration && pA.duration > 0 && pA.duration - pA.currentTime <= crossfadeDuration) {
           isTransitioningRef.current = true;
+          setIsTransitioning(true);
           if (pB) {
             pB.currentTime = 0;
             pB.play().catch(() => {});
           }
           setActivePlayer('B');
 
-          // Fallback reset timer in case onEnded is delayed
           if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
           resetTimerRef.current = setTimeout(() => {
             if (pA) {
@@ -87,18 +88,19 @@ export default function SeamlessVideoPlayer({
               pA.currentTime = 0;
             }
             isTransitioningRef.current = false;
-          }, (crossfadeDuration + 0.3) * 1000);
+            setIsTransitioning(false);
+          }, (crossfadeDuration + 0.1) * 1000);
         }
       } else if (activePlayerRef.current === 'B' && pB && !isTransitioningRef.current) {
         if (pB.duration && pB.duration > 0 && pB.duration - pB.currentTime <= crossfadeDuration) {
           isTransitioningRef.current = true;
+          setIsTransitioning(true);
           if (pA) {
             pA.currentTime = 0;
             pA.play().catch(() => {});
           }
           setActivePlayer('A');
 
-          // Fallback reset timer in case onEnded is delayed
           if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
           resetTimerRef.current = setTimeout(() => {
             if (pB) {
@@ -106,7 +108,8 @@ export default function SeamlessVideoPlayer({
               pB.currentTime = 0;
             }
             isTransitioningRef.current = false;
-          }, (crossfadeDuration + 0.3) * 1000);
+            setIsTransitioning(false);
+          }, (crossfadeDuration + 0.1) * 1000);
         }
       }
 
@@ -127,6 +130,7 @@ export default function SeamlessVideoPlayer({
       pA.currentTime = 0;
     }
     isTransitioningRef.current = false;
+    setIsTransitioning(false);
     if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
   }, []);
 
@@ -137,12 +141,21 @@ export default function SeamlessVideoPlayer({
       pB.currentTime = 0;
     }
     isTransitioningRef.current = false;
+    setIsTransitioning(false);
     if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
   }, []);
 
   const markReady = useCallback(() => {
     setIsReady(true);
   }, []);
+
+  // Compute opacities and stacking orders to guarantee zero background peek-through:
+  // When active is B and transitioning: B fades in on top (z:2, opacity:1), A stays solid (z:1, opacity:1).
+  // When active is A and transitioning: A fades in on top (z:2, opacity:1), B stays solid (z:1, opacity:1).
+  const isAVisible = isReady && (activePlayer === 'A' || isTransitioning);
+  const isBVisible = isReady && (activePlayer === 'B' || isTransitioning);
+  const isAOnTop = activePlayer === 'A';
+  const isBOnTop = activePlayer === 'B';
 
   return (
     <div className={className} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
@@ -153,7 +166,7 @@ export default function SeamlessVideoPlayer({
         muted
         playsInline
         preload="auto"
-        poster={poster}
+        poster={poster || undefined}
         src={src}
         onCanPlay={markReady}
         onCanPlayThrough={markReady}
@@ -166,8 +179,9 @@ export default function SeamlessVideoPlayer({
           width: '100%',
           height: '100%',
           objectFit: 'cover',
-          opacity: isReady && activePlayer === 'A' ? 1 : 0,
-          transition: `opacity ${crossfadeDuration}s cubic-bezier(0.4, 0, 0.2, 1)`,
+          opacity: isAVisible ? (activePlayer === 'A' ? 1 : (isTransitioning ? 1 : 0)) : 0,
+          zIndex: isAOnTop ? 2 : 1,
+          transition: isAOnTop ? `opacity ${crossfadeDuration}s cubic-bezier(0.4, 0, 0.2, 1)` : 'none',
           filter: 'contrast(1.1) saturate(1.24) brightness(1.02)',
           imageRendering: '-webkit-optimize-contrast',
           transform: 'translate3d(0, 0, 0)',
@@ -183,7 +197,7 @@ export default function SeamlessVideoPlayer({
         muted
         playsInline
         preload="auto"
-        poster={poster}
+        poster={poster || undefined}
         src={src}
         onCanPlay={markReady}
         onCanPlayThrough={markReady}
@@ -196,8 +210,9 @@ export default function SeamlessVideoPlayer({
           width: '100%',
           height: '100%',
           objectFit: 'cover',
-          opacity: isReady && activePlayer === 'B' ? 1 : 0,
-          transition: `opacity ${crossfadeDuration}s cubic-bezier(0.4, 0, 0.2, 1)`,
+          opacity: isBVisible ? (activePlayer === 'B' ? 1 : (isTransitioning ? 1 : 0)) : 0,
+          zIndex: isBOnTop ? 2 : 1,
+          transition: isBOnTop ? `opacity ${crossfadeDuration}s cubic-bezier(0.4, 0, 0.2, 1)` : 'none',
           filter: 'contrast(1.1) saturate(1.24) brightness(1.02)',
           imageRendering: '-webkit-optimize-contrast',
           transform: 'translate3d(0, 0, 0)',

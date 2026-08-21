@@ -89,20 +89,16 @@ export default function Home() {
       {/* ── Section 1: Hero (Full-Screen 100vh Video Background / Portrait Canvas on Mobile) ── */}
       <section id="hero" className={styles.hero}>
         <div className={styles.heroBackdrop}>
-          <div className={styles.heroPortraitBg} aria-hidden="true" />
-
           {/* Desktop/Landscape Video Background (Seamless Loop Crossfade) */}
           <SeamlessVideoPlayer
             src="/back_mvp.mp4"
-            poster="/landing-space-bg.png"
             className={styles.heroVideoDesktopGroup}
             crossfadeDuration={0.85}
           />
 
-          {/* Mobile/Portrait Video Background (Seamless Loop Crossfade) */}
+          {/* Mobile/Portrait Video Background (Seamless Loop Crossfade - Pure Video) */}
           <SeamlessVideoPlayer
             src="/back_mvp_potrait.mp4"
-            poster="/landing-space-portrait.jpg"
             className={styles.heroVideoMobileGroup}
             videoStyle={{ objectPosition: 'center center' }}
             crossfadeDuration={0.85}

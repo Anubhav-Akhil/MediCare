@@ -85,14 +85,6 @@
     #0c001a;
 }
 
-.heroPortraitBg {
-  display: none;
-  position: absolute;
-  inset: 0;
-  background: url('/landing-space-portrait.jpg') center top / cover no-repeat;
-  filter: contrast(1.06) saturate(1.2) brightness(1.02);
-  z-index: 0;
-}
 
 .heroVideo {
   position: absolute;
@@ -828,10 +820,6 @@
 }
 
 @media (orientation: portrait), (max-width: 768px) {
-  .heroPortraitBg {
-    display: block;
-  }
-
   .heroVideoDesktopGroup {
     display: none !important;
   }
