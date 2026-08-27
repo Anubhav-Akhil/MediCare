@@ -29,6 +29,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="icon" href="/logo.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/logo.svg" />
+        {/* Preconnect to ImageKit CDN for instant video streaming */}
+        <link rel="preconnect" href="https://ik.imagekit.io" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://ik.imagekit.io" />
       </head>
       <body className="min-h-full font-sans">
         <ClientLayout>{children}</ClientLayout>

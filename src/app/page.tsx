@@ -91,14 +91,14 @@ export default function Home() {
         <div className={styles.heroBackdrop}>
           {/* Desktop/Landscape Video Background (Seamless Loop Crossfade) */}
           <SeamlessVideoPlayer
-            src="/back_mvp.mp4"
+            src="https://ik.imagekit.io/AnubhavAkhil/back_mvp.mp4?updatedAt=1787804749445"
             className={styles.heroVideoDesktopGroup}
             crossfadeDuration={0.85}
           />
 
           {/* Mobile/Portrait Video Background (Seamless Loop Crossfade - Pure Video) */}
           <SeamlessVideoPlayer
-            src="/back_mvp_potrait.mp4"
+            src="https://ik.imagekit.io/AnubhavAkhil/back_mvp_potrait.mp4?updatedAt=1787804749470"
             className={styles.heroVideoMobileGroup}
             videoStyle={{ objectPosition: 'center center' }}
             crossfadeDuration={0.85}
