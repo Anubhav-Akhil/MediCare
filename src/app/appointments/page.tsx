@@ -576,8 +576,8 @@ export default function AppointmentsPage() {
                 </div>
                 <button
                   onClick={() => {
-                    navigator.clipboard.writeText(`https://medicare.clinic/telehealth/${telehealthAppt.id}`);
-                    showToast('Telehealth invitation link copied to clipboard!', 'success');
+                    navigator.clipboard.writeText('https://meet.google.com/new');
+                    showToast('Google Meet invitation link copied to clipboard!', 'success');
                   }}
                   className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-bold cursor-pointer"
                 >
@@ -594,11 +594,11 @@ export default function AppointmentsPage() {
                 </button>
                 <button
                   onClick={() => {
-                    showToast('Starting encrypted clinical audio/video bridge...', 'info');
+                    showToast('Launching Google Meet session...', 'info');
+                    window.open('https://meet.google.com/new', '_blank', 'noopener,noreferrer');
                     setTimeout(() => {
-                      showToast('Telehealth bridge active and streaming.', 'success');
                       setTelehealthAppt(null);
-                    }, 800);
+                    }, 500);
                   }}
                   className="px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 cursor-pointer"
                 >
