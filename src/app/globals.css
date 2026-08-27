@@ -711,3 +711,333 @@ html {
   bottom: -100px;
   left: -100px;
 }
+
+/* ═════════════════════════════════════════════════════════════════════════ */
+/* ── MIDNIGHT OBSIDIAN & NEON VIOLET HUD THEME (POST-LOGIN INTERFACE) ──── */
+/* ═════════════════════════════════════════════════════════════════════════ */
+
+.app-hud-root {
+  --text-primary: #ffffff;
+  --text-secondary: #d6cee8;
+  --text-muted: #a39cb8;
+  --surface: #0e0926;
+  --surface-hover: #170f38;
+  --border: rgba(139, 92, 246, 0.2);
+  --border-light: rgba(139, 92, 246, 0.12);
+  --glass-bg: rgba(14, 9, 34, 0.72);
+  --glass-bg-strong: rgba(14, 9, 34, 0.85);
+  --glass-border: rgba(139, 92, 246, 0.2);
+  --glass-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.7);
+  --glass-shadow-lg: 0 20px 48px -10px rgba(0, 0, 0, 0.8);
+  background-color: #070314;
+  background-image: 
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(120, 50, 220, 0.18), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 80%, rgba(255, 122, 24, 0.08), transparent),
+    radial-gradient(ellipse 50% 30% at 10% 90%, rgba(6, 182, 212, 0.07), transparent),
+    linear-gradient(180deg, #070314 0%, #0b0620 50%, #070314 100%);
+  color: #ffffff;
+  min-height: 100vh;
+}
+
+/* Force dark text and high contrast inside HUD */
+.app-hud-root .section-title {
+  color: #ffffff !important;
+}
+
+.app-hud-root .glass-card,
+.app-hud-root .glass-card-static,
+.app-hud-root .feature-card {
+  background: rgba(14, 9, 34, 0.75) !important;
+  backdrop-filter: blur(24px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+  border: 1px solid rgba(139, 92, 246, 0.2) !important;
+  color: #ffffff !important;
+}
+
+.app-hud-root .pro-input,
+.app-hud-root .form-input {
+  background: rgba(12, 7, 30, 0.75) !important;
+  border: 1px solid rgba(139, 92, 246, 0.25) !important;
+  color: #ffffff !important;
+}
+
+.app-hud-root .pro-input::placeholder,
+.app-hud-root .form-input::placeholder {
+  color: rgba(255, 255, 255, 0.45) !important;
+}
+
+.app-hud-root .pro-table thead th {
+  background: rgba(20, 13, 48, 0.9) !important;
+  color: #a79ec2 !important;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.2) !important;
+}
+
+.app-hud-root .pro-table tbody td {
+  color: #d6cee8 !important;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08) !important;
+}
+
+.app-hud-root .pro-table tbody tr:hover {
+  background: rgba(139, 92, 246, 0.1) !important;
+}
+
+.app-hud-root h1,
+.app-hud-root h2,
+.app-hud-root h3,
+.app-hud-root h4 {
+  color: #ffffff;
+}
+
+.app-hud-root .text-slate-800,
+.app-hud-root .text-slate-900,
+.app-hud-root .text-slate-700 {
+  color: #ffffff !important;
+}
+
+.app-hud-root .text-slate-600,
+.app-hud-root .text-slate-500,
+.app-hud-root .text-slate-400 {
+  color: #b4a9cc !important;
+}
+
+/* Dark Glass HUD Cards */
+.hud-card {
+  background: rgba(14, 9, 34, 0.72);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1px solid rgba(139, 92, 246, 0.18);
+  border-radius: 20px;
+  box-shadow: 
+    0 16px 40px -12px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  position: relative;
+}
+
+.hud-card-hover {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.25s ease,
+              box-shadow 0.25s ease;
+}
+
+.hud-card-hover:hover {
+  transform: translateY(-2px);
+  border-color: rgba(168, 85, 247, 0.35);
+  box-shadow: 
+    0 20px 48px -10px rgba(0, 0, 0, 0.8),
+    0 0 24px -4px rgba(139, 92, 246, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Glowing pill search bar */
+.hud-search-pill {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(16px);
+  border-radius: 9999px;
+  color: #ffffff;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hud-search-pill:focus-within {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #a855f7;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.25), 0 0 20px rgba(168, 85, 247, 0.2);
+}
+
+/* Right HUD Rail */
+.hud-right-rail {
+  background: rgba(10, 6, 26, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-left: 1px solid rgba(139, 92, 246, 0.16);
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Active Orange HUD Action Button */
+.hud-btn-active-orange {
+  background: linear-gradient(135deg, #ff7a18 0%, #ea580c 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(255, 122, 24, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Secondary / Standard HUD Action Button */
+.hud-btn-icon {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #a39cb8;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hud-btn-icon:hover {
+  background: rgba(139, 92, 246, 0.15);
+  border-color: rgba(168, 85, 247, 0.3);
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+/* Glowing Neon Sliders */
+.hud-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+  transition: background 0.2s;
+}
+
+.hud-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.9), 0 0 0 3px rgba(139, 92, 246, 0.8);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.hud-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 16px rgba(255, 255, 255, 1), 0 0 0 4px #a855f7;
+}
+
+.hud-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #8b5cf6;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+}
+
+/* Dark HUD Tables */
+.hud-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.hud-table thead th {
+  background: rgba(20, 13, 48, 0.85);
+  color: #9d94b8;
+  font-weight: 600;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 14px 18px;
+  text-align: left;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.18);
+}
+
+.hud-table tbody td {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.08);
+  font-size: 0.875rem;
+  color: #d6cee8;
+  vertical-align: middle;
+}
+
+.hud-table tbody tr {
+  transition: background 0.18s ease;
+}
+
+.hud-table tbody tr:hover {
+  background: rgba(139, 92, 246, 0.09);
+}
+
+.hud-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Dark HUD Inputs */
+.hud-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(12, 7, 30, 0.7);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-radius: 12px;
+  font-size: 0.875rem;
+  color: #ffffff;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.hud-input:focus {
+  border-color: #a855f7;
+  background: rgba(18, 10, 44, 0.9);
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2), 0 0 16px rgba(139, 92, 246, 0.15);
+}
+
+.hud-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* Dark Modal */
+.hud-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(4, 2, 12, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: fadeIn 0.2s ease;
+}
+
+.hud-modal-content {
+  background: rgba(15, 9, 37, 0.94);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 1px solid rgba(139, 92, 246, 0.28);
+  border-radius: 24px;
+  box-shadow: 
+    0 24px 72px -12px rgba(0, 0, 0, 0.9),
+    0 0 40px -10px rgba(139, 92, 246, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  color: #e9e4f5;
+  animation: scaleIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Glowing Neon Badge */
+.hud-badge-neon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  color: #c4b5fd;
+}
+
+/* Radar & Pulse Animations */
+@keyframes radar-sweep {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes ping-slow {
+  0% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(2.2); opacity: 0; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+.animate-radar {
+  animation: radar-sweep 8s linear infinite;
+}
+
+.animate-ping-slow {
+  animation: ping-slow 2.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}

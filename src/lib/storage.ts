@@ -1,8 +1,9 @@
-import { Patient, Appointment, MedicalRecord, DashboardStats } from '@/types';
+import { Patient, Appointment, MedicalRecord, DashboardStats, PatientVisitHistory } from '@/types';
 
 const PATIENTS_KEY = 'pms_patients';
 const APPOINTMENTS_KEY = 'pms_appointments';
 const RECORDS_KEY = 'pms_records';
+const VISIT_HISTORY_KEY = 'pms_visit_history';
 const SEEDED_KEY = 'pms_seeded';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -147,6 +148,32 @@ export function deleteMedicalRecord(id: string): boolean {
   if (filtered.length === records.length) return false;
   setItem(RECORDS_KEY, filtered);
   return true;
+}
+
+// ── Patient Visit History (AI Copilot Summaries) ─────────────────────────────
+
+export function getAllVisitHistories(): PatientVisitHistory[] {
+  return getItem<PatientVisitHistory>(VISIT_HISTORY_KEY);
+}
+
+export function getVisitHistory(patientId: string): PatientVisitHistory[] {
+  return getAllVisitHistories()
+    .filter((v) => v.patientId === patientId)
+    .sort((a, b) => new Date(b.visitDate).getTime() - new Date(a.visitDate).getTime());
+}
+
+export function saveVisitHistory(
+  entry: Omit<PatientVisitHistory, 'id' | 'createdAt'>
+): PatientVisitHistory {
+  const all = getAllVisitHistories();
+  const newEntry: PatientVisitHistory = {
+    ...entry,
+    id: generateId(),
+    createdAt: new Date().toISOString(),
+  };
+  all.push(newEntry);
+  setItem(VISIT_HISTORY_KEY, all);
+  return newEntry;
 }
 
 // ── Dashboard Stats ──────────────────────────────────────────────────────────
@@ -373,8 +400,48 @@ export function seedData(): void {
     },
   ];
 
+  const visitHistories: PatientVisitHistory[] = [
+    {
+      id: 'v1',
+      patientId: 'p5',
+      visitDate: new Date(Date.now() - 4 * 86400000).toISOString().split('T')[0],
+      aiSummary: 'Baseline consultation for uncontrolled hyperglycemia and postprandial fatigue.',
+      symptoms: 'Polydipsia, polyuria, fasting blood glucose 185 mg/dL',
+      diagnosis: 'Type 2 Diabetes Mellitus (Uncontrolled)',
+      treatmentPlan: 'Initiated Metformin 500mg BID + Glimepiride 1mg OD, diabetic medical nutrition therapy',
+      doctorNotes: 'Recheck HbA1c in 3 months; monitor daily fasting sugars',
+      progressNote: 'Initial Baseline Established',
+      createdAt: new Date(Date.now() - 4 * 86400000).toISOString(),
+    },
+    {
+      id: 'v2',
+      patientId: 'p5',
+      visitDate: yesterday,
+      aiSummary: 'Follow-up consultation evaluating glycemic control and medication tolerance.',
+      symptoms: 'Reported mild gastrointestinal discomfort initially, now resolved. Fasting glucose reduced to 134 mg/dL.',
+      diagnosis: 'Type 2 Diabetes Mellitus (Improving)',
+      treatmentPlan: 'Continue current Metformin and Glimepiride regimen with evening walking routine',
+      doctorNotes: 'Patient responding well; renal panel normal',
+      progressNote: 'Marked Glycemic Improvement (Fasting down from 185 to 134 mg/dL)',
+      createdAt: new Date(Date.now() - 1 * 86400000).toISOString(),
+    },
+    {
+      id: 'v3',
+      patientId: 'p1',
+      visitDate: yesterday,
+      aiSummary: 'Evaluation of elevated blood pressure reading (140/90 mmHg) and occasional occipital morning headaches.',
+      symptoms: 'Morning headaches, mild fatigue, stage 1 systolic hypertension',
+      diagnosis: 'Essential Stage 1 Hypertension',
+      treatmentPlan: 'Amlodipine 5mg OD, DASH diet, sodium restriction < 2g/day',
+      doctorNotes: 'Follow-up home BP log in 2 weeks',
+      progressNote: 'Initial Hypertension Assessment',
+      createdAt: new Date(Date.now() - 1 * 86400000).toISOString(),
+    },
+  ];
+
   setItem(PATIENTS_KEY, patients);
   setItem(APPOINTMENTS_KEY, appointments);
   setItem(RECORDS_KEY, records);
+  setItem(VISIT_HISTORY_KEY, visitHistories);
   localStorage.setItem(SEEDED_KEY, 'true');
 }

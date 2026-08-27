@@ -75,3 +75,16 @@ export interface RegisterData {
   department?: string;
 }
 
+export interface PatientVisitHistory {
+  id: string;
+  patientId: string;
+  visitDate: string;
+  aiSummary: string;
+  symptoms: string;
+  diagnosis: string;
+  treatmentPlan: string;
+  doctorNotes: string;
+  progressNote: string;
+  createdAt: string;
+}
+

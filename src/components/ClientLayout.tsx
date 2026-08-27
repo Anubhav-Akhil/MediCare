@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import TopNav from './TopNav';
+import AppShell from './AppShell';
 import { ToastProvider } from './Toast';
 import { AuthProvider } from '@/lib/auth-context';
 import WaterEffect from './WaterEffect';
@@ -24,11 +25,19 @@ export default function ClientLayout({
   return (
     <AuthProvider>
       <ToastProvider>
-        <div className="min-h-screen flex flex-col">
-          <WaterEffect />
-          {!isAuthPage && <TopNav />}
-          <main className={isLanding || isAuthPage ? '' : 'pt-[72px]'}>{children}</main>
-        </div>
+        {isLanding ? (
+          <div className="min-h-screen flex flex-col">
+            <WaterEffect />
+            <TopNav />
+            <main>{children}</main>
+          </div>
+        ) : isAuthPage ? (
+          <div className="min-h-screen flex flex-col">
+            <main>{children}</main>
+          </div>
+        ) : (
+          <AppShell>{children}</AppShell>
+        )}
       </ToastProvider>
     </AuthProvider>
   );
